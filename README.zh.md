@@ -29,6 +29,8 @@ dsh plugin --profile web remove dsh-providers
 
 `dsh web`,打开**设置 → 账户**:
 
+![账户页](docs/accounts.png)
+
 | 操作 | 说明 |
 |---|---|
 | **登录** | OAuth 或 API 密钥;成功即写好路由,模型直接进选择器 |

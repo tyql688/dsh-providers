@@ -29,6 +29,8 @@ dsh plugin --profile web remove dsh-providers
 
 Run `dsh web`, open **Settings → Accounts**:
 
+![Accounts page](docs/accounts.png)
+
 | Action | What it does |
 |---|---|
 | **Sign in** | OAuth or API key; also writes the provider's route so models reach the picker right away |
