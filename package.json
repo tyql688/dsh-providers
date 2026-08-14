@@ -1,0 +1,119 @@
+{
+  "name": "dsh-providers",
+  "version": "0.1.0",
+  "description": "Model providers for DeepSeek Harness: sign in with OAuth or an API key, and keep every provider's model catalog current",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "cordis",
+    "oauth",
+    "llm",
+    "model-provider"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tyql688/dsh-providers.git"
+  },
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  },
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/types/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./routes": {
+      "types": "./lib/types/routes.d.ts",
+      "default": "./lib/routes.js"
+    },
+    "./wire": {
+      "types": "./lib/types/wire.d.ts",
+      "default": "./lib/wire.js"
+    },
+    "./package.json": "./package.json",
+    "./client": {
+      "types": "./lib/types/client/index.d.ts",
+      "default": "./lib/client.js"
+    }
+  },
+  "files": [
+    "lib/**/*.js",
+    "lib/types/**/*.d.ts",
+    "cordis.patch.yml"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web"
+    }
+  },
+  "scripts": {
+    "build": "tsdown && tsc -p tsconfig.json --emitDeclarationOnly && tsc -p tsconfig.client.json --emitDeclarationOnly",
+    "check": "pnpm lint && pnpm check-types && knip",
+    "check-types": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.client.json --noEmit",
+    "lint": "oxlint --max-warnings=0",
+    "prepare": "tsdown && tsc -p tsconfig.json --emitDeclarationOnly --noCheck && tsc -p tsconfig.client.json --emitDeclarationOnly --noCheck"
+  },
+  "license": "MIT",
+  "packageManager": "pnpm@10.18.0",
+  "dependencies": {
+    "@earendil-works/pi-ai": "^0.84.1"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.1",
+    "@deepseek-ai/dsh-atomic-write": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-client-locale": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-client-ui-primitives": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-client-ui-settings": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-client-ui-slots": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-client-web-react": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-credentials": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-credentials-local": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-home-paths": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-host-webserver": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-llm": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-llm-pi-ai": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-settings": "^0.1.0-rc.6",
+    "@deepseek-ai/schemastery": "^3.18.1",
+    "react": "^18.2.0"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "^4.0.1",
+    "@deepseek-ai/dsh": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-atomic-write": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-attachment": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-brand": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-client-locale": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-client-ui-primitives": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-client-ui-settings": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-client-ui-slots": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-client-web-react": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-credentials": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-credentials-local": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-home-paths": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-host-webserver": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-invariants": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-launch-environment": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-llm": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-llm-pi-ai": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-settings": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-timeout": "^0.1.0-rc.6",
+    "@deepseek-ai/schemastery": "^3.18.1",
+    "@lobehub/icons": "^5.16.0",
+    "@stylistic/eslint-plugin": "^5.10.0",
+    "@types/node": "^22.15.0",
+    "@types/react": "~18.3.1",
+    "knip": "^6.32.2",
+    "lightningcss": "^1.30.1",
+    "oxlint": "^1.78.0",
+    "react": "^18.3.1",
+    "tsdown": "^0.15.6",
+    "typescript": "^5.9.2"
+  }
+}

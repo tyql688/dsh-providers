@@ -1,0 +1,128 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": [
+    "typescript",
+    "unicorn",
+    "react",
+    "promise",
+    "oxc"
+  ],
+  "env": {
+    "browser": true,
+    "es2024": true,
+    "node": true
+  },
+  "categories": {
+    "correctness": "error",
+    "suspicious": "error",
+    "perf": "warn"
+  },
+  "rules": {
+    "no-console": "error",
+    "eqeqeq": [
+      "error",
+      "always"
+    ],
+    "no-await-in-loop": "off",
+    "promise/prefer-await-to-then": "error",
+    "typescript/consistent-type-imports": [
+      "error",
+      {
+        "prefer": "type-imports",
+        "fixStyle": "separate-type-imports"
+      }
+    ],
+    "typescript/no-explicit-any": "error",
+    "unicorn/prefer-node-protocol": "error",
+    "react/react-in-jsx-scope": "off",
+    "unicorn/require-module-specifiers": "off",
+    "oxc/no-map-spread": "off"
+  },
+  "overrides": [
+    {
+      // These files drive promise chains handed to them (SSE handler, login
+      // continuations) instead of awaiting, so the rule is off there.
+      "files": [
+        "src/routes.ts",
+        "src/login.ts",
+        "src/credentials.ts"
+      ],
+      "rules": {
+        "promise/prefer-await-to-then": "off"
+      }
+    },
+    {
+      // No separate formatter: oxlint + @stylistic is the formatter, same as
+      // upstream. These rules mirror deepseek-harness/.oxlintrc.json verbatim.
+      "files": [
+        "**/*.{ts,tsx}"
+      ],
+      "rules": {
+        "@stylistic/indent": [
+          "error",
+          2
+        ],
+        "@stylistic/semi": [
+          "error",
+          "never"
+        ],
+        "@stylistic/quotes": [
+          "error",
+          "single",
+          {
+            "avoidEscape": true
+          }
+        ],
+        "@stylistic/comma-dangle": [
+          "error",
+          "always-multiline"
+        ],
+        "@stylistic/eol-last": [
+          "error",
+          "always"
+        ],
+        "@stylistic/no-trailing-spaces": "error",
+        "@stylistic/object-curly-spacing": [
+          "error",
+          "always"
+        ],
+        "@stylistic/arrow-parens": [
+          "error",
+          "as-needed",
+          {
+            "requireForBlockBody": true
+          }
+        ],
+        "@stylistic/member-delimiter-style": [
+          "error",
+          {
+            "multiline": {
+              "delimiter": "none"
+            },
+            "singleline": {
+              "delimiter": "semi",
+              "requireLast": false
+            }
+          }
+        ],
+        // Check-only: line length has no safe auto-fix.
+        "@stylistic/max-len": [
+          "error",
+          {
+            "code": 140,
+            "ignoreUrls": true,
+            "ignoreStrings": true,
+            "ignoreTemplateLiterals": true
+          }
+        ]
+      },
+      "jsPlugins": [
+        "@stylistic/eslint-plugin"
+      ]
+    }
+  ],
+  "ignorePatterns": [
+    "lib/**",
+    "node_modules/**"
+  ]
+}

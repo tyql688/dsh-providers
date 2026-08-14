@@ -1,0 +1,35 @@
+# dsh-providers bundle patch.
+#
+# The base composition's `credentials` row is disabled and this bundle's own
+# provider takes its place. `ctx.credentials` is a single-implementation
+# cordis service, and the account layer must live inside it so the adapter's
+# per-request `resolve()` picks up a refreshed OAuth token without any change
+# to the adapter. Nothing is lost by the swap: the replacement extends
+# `@deepseek-ai/dsh-credentials-local`, so the process environment,
+# `$DSH_HOME/.credentials.yaml`, and the project and user `.env` layers keep
+# their meaning and precedence.
+#
+# Disable-and-insert rather than an id override, because a patch's `name` is
+# checked against the row it patches: an override naming a different module is
+# skipped with a warning, which would silently leave the shipped provider
+# mounted.
+#
+# There is no row for the accounts settings page. The browser roster is built
+# by scanning mounted rows for packages declaring `dsh.client`, and this
+# package declares it — the page ships with the rows below.
+#
+# Row order carries no meaning: activation waits on services, not position.
+- id: credentials
+  disabled: true
+
+- insert:
+    # `ctx.credentials` (every shipped layer plus the account layer) and
+    # `ctx.providerAuth` (the account service the surfaces drive).
+    - id: providers-credentials
+      name: 'dsh-providers'
+
+    # The account HTTP routes, under /dsh-providers. Loopback same-origin
+    # only. The row injects `webServer`, so it simply never activates in a
+    # headless profile.
+    - id: providers-routes
+      name: 'dsh-providers/routes'

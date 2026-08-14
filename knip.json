@@ -1,0 +1,10 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "project": [
+    "src/**/*.{ts,tsx}"
+  ],
+  "ignoreDependencies": [
+    "@deepseek-ai/dsh"
+  ],
+  "ignoreExportsUsedInFile": true
+}

@@ -1,0 +1,544 @@
+/* Accounts settings page: one column of provider rows, each expanding into its
+   own card, plus the login wizard's body. The settings panel already owns a
+   navigation column, so a second rail here would make three columns inside one
+   dialog. Colors resolve through --dsw-* aliases only. */
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  min-height: 0;
+}
+
+.intro {
+  color: var(--dsw-alias-label-secondary);
+  font-size: 13px;
+  line-height: 20px;
+  margin: 0;
+}
+
+.search {
+  width: 100%;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  /* The scrollbar sits outside the rows rather than over their right edge. */
+  padding-right: 4px;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.groupLabel {
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+  margin: 0;
+  padding: 0 2px 2px;
+}
+
+/* ── provider row ────────────────────────────────────────────────────── */
+
+.row {
+  border: 1px solid transparent;
+  border-radius: 10px;
+}
+
+.rowOpen {
+  border-color: var(--dsw-alias-border-l1);
+  background: var(--dsw-alias-bg-layer-1);
+}
+
+.rowSummary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 36px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--dsw-alias-label-primary);
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.rowSummary:hover {
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+.glyph {
+  flex-shrink: 0;
+  /* Mono marks render in currentColor and follow the theme. */
+  color: currentColor;
+}
+
+/* A themed brand renders both variants; the theme shows exactly one. */
+.darkOnly {
+  display: none;
+}
+
+body[data-ds-dark-theme] .darkOnly {
+  display: revert;
+}
+
+body[data-ds-dark-theme] .lightOnly {
+  display: none;
+}
+
+/* Stand-in mark for a brand the icon library does not ship. It has to read as
+   a mark rather than a stray letter, or the row looks like it failed to load
+   its icon. */
+.monogram {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 5px;
+  border: 1px solid var(--dsw-alias-border-l2);
+  background: var(--dsw-alias-bg-layer-2);
+  color: var(--dsw-alias-label-secondary);
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.rowName {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rowStatus {
+  flex-shrink: 0;
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 12px;
+}
+
+.chevron,
+.chevronOpen {
+  flex-shrink: 0;
+  color: var(--dsw-alias-label-tertiary);
+  transition: transform 0.15s ease;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  height: 18px;
+  padding: 0 6px;
+  border-radius: 4px;
+  background: var(--dsw-alias-state-business-tertiary);
+  color: var(--dsw-alias-state-business-primary);
+  font-size: 11px;
+  line-height: 18px;
+}
+
+/* ── the open card ───────────────────────────────────────────────────── */
+
+/* Aligned with the summary's own padding box, not hung under the provider name.
+   The 40px indent that used to sit here bought a decorative relationship with
+   the glyph and paid for it in a dead left margin down the whole card, which is
+   the width the model ids needed. */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 2px 12px 14px;
+}
+
+/* Every fact that is true of the account right now, on one line. */
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px;
+  margin: 0;
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.factRef {
+  color: var(--dsw-alias-label-tertiary);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+}
+
+.warn {
+  color: var(--dsw-alias-state-warn-label);
+}
+
+.error {
+  color: var(--dsw-alias-state-error-primary);
+}
+
+/* An actionable state, not just a warning: the sentence and its repair sit on
+   one line so the user never has to find the fix elsewhere. */
+.notice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--dsw-alias-state-warn-tertiary);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+/* What signing in actually bought: the models the live route serves. */
+.models {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.modelsHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Three actions plus a label and a timestamp on one row: let the row wrap
+   rather than let any single action truncate its own verb. */
+.modelsHead > button {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.modelsLabel {
+  color: var(--dsw-alias-label-primary);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
+}
+
+/* Pushes the card's model actions to the trailing edge, away from the label. */
+.grow {
+  flex: 1;
+}
+
+.modelList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+  width: 100%;
+}
+
+/* Route key and protocol. */
+.modelGroupLabel {
+  margin: 0;
+  padding: 6px 0 2px;
+  color: var(--dsw-alias-label-tertiary);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  line-height: 16px;
+}
+
+/* The first group's label sits against the panel's own top padding. */
+.modelGroupLabel:first-child {
+  padding-top: 0;
+}
+
+/* One name per line. Flowing them into auto-filled columns used the width but
+   stretched the tracks, so two names in a wide card sat at opposite ends with a
+   canyon between them — a worse read than the empty margin it was spending. A
+   settings list is allowed to be a list. */
+.modelRows {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 6px 10px;
+  list-style: none;
+  width: 100%;
+  border-radius: 8px;
+  background: var(--dsw-alias-bg-layer-1);
+  font-size: 12px;
+  line-height: 20px;
+}
+
+.modelRow {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  min-width: 0;
+  padding: 1px 0;
+}
+
+.modelName {
+  color: var(--dsw-alias-label-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.modelTag {
+  flex-shrink: 0;
+  align-self: center;
+  padding: 0 5px;
+  border-radius: 4px;
+  background: var(--dsw-alias-bg-layer-2);
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 10px;
+  line-height: 15px;
+}
+
+/* ── catalog and endpoint controls ───────────────────────────────────── */
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* The search field takes the slack; the action keeps its label on one line,
+   which a flex item will otherwise wrap rather than shrink its sibling. */
+.toolbar > button {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.catalogNotice {
+  margin: 0;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--dsw-alias-bg-layer-1);
+  color: var(--dsw-alias-label-secondary);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.discover {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 8px;
+  background: var(--dsw-alias-bg-layer-1);
+}
+
+.discoverInput {
+  flex: 1;
+  min-width: 220px;
+}
+
+/* The caveat spans the row rather than sharing a line with the controls. */
+.discover .hint {
+  flex-basis: 100%;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+/* Separated from the actions that add something, so the undoable one is not
+   the next thing under the pointer or the next stop in the tab order. */
+.destructive {
+  margin-left: auto;
+}
+
+.checkboxRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--dsw-alias-label-secondary);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.hint {
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 12px;
+  line-height: 18px;
+  margin: 0;
+}
+
+/* ── labelled fields ─────────────────────────────────────────────────── */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.fieldLabel {
+  color: var(--dsw-alias-label-primary);
+  font-size: 13px;
+  line-height: 20px;
+}
+
+/* The reveal button overlays the input's trailing edge rather than sitting
+   beside it, so the field keeps one silhouette instead of reading as two
+   controls that happen to be adjacent. */
+.fieldControl {
+  position: relative;
+  display: flex;
+  min-width: 0;
+}
+
+.fieldInput {
+  flex: 1;
+  min-width: 0;
+}
+
+.fieldInput input {
+  padding-right: 34px;
+}
+
+.reveal {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--dsw-alias-label-tertiary);
+  cursor: pointer;
+}
+
+.reveal:hover {
+  background: var(--dsw-alias-interactive-bg-hover);
+  color: var(--dsw-alias-label-secondary);
+}
+
+.confirmBody {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+/* ── login wizard ────────────────────────────────────────────────────── */
+
+/* The wizard lives inside the shared modal card, which owns the width. Every
+   box here must therefore be free to shrink: an authorization URL is hundreds
+   of characters and would otherwise push the card's own actions off-screen. */
+.wizard {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.wizardUrl {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 8px;
+  background: var(--dsw-alias-bg-layer-1);
+}
+
+.wizardUrlText {
+  min-width: 0;
+  max-height: 132px;
+  overflow-y: auto;
+  color: var(--dsw-alias-label-tertiary);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  line-height: 16px;
+  overflow-wrap: anywhere;
+}
+
+.deviceCode {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 20px;
+  letter-spacing: 2px;
+  color: var(--dsw-alias-label-primary);
+}
+
+.promptRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+}
+
+.promptInput {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.promptSubmit {
+  flex: 0 0 auto;
+}
+
+.log {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 160px;
+  overflow-y: auto;
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.optionList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.option {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--dsw-alias-label-primary);
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.option:hover {
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+.optionDescription {
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 12px;
+}
