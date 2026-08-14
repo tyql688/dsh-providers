@@ -8,10 +8,9 @@
 
 ```sh
 dsh plugin --profile web add github:tyql688/dsh-providers
-dsh plugin --profile web approve-builds   # 首次 add 提示构建被拦,允许一次即可
 ```
 
-也可本地 clone,不需要上面那步:
+仓库自带构建好的 `lib/`,安装过程不执行任何构建脚本。也可本地 clone:
 
 ```sh
 git clone https://github.com/tyql688/dsh-providers.git
@@ -49,7 +48,8 @@ dsh plugin --profile web remove dsh-providers
 ## 开发
 
 ```sh
-pnpm install   # 装依赖;`prepare` 构建 lib/
+pnpm install   # 装依赖
+pnpm build     # 构建 lib/——已提交进仓库,改完源码要重新构建并随源码一起提交
 pnpm check     # oxlint + tsc + knip
 ```
 

@@ -8,10 +8,22 @@ Model providers for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-h
 
 ```sh
 dsh plugin --profile web add github:tyql688/dsh-providers
-dsh plugin --profile web approve-builds   # first add reports a blocked build; this fixes it
 ```
 
-Or from a local clone (`pnpm install` first, then `dsh plugin --profile web add "$PWD"`) — neither needs the allowance. Remove with `dsh plugin --profile web remove dsh-providers`; best to sign out of OAuth providers first (ticking "remove route").
+The repo ships `lib/` prebuilt, so the install runs no build scripts. Or from a local clone:
+
+```sh
+git clone https://github.com/tyql688/dsh-providers.git
+cd dsh-providers
+pnpm install
+dsh plugin --profile web add "$PWD"
+```
+
+Uninstall (best to sign out of OAuth providers first, ticking "remove route"):
+
+```sh
+dsh plugin --profile web remove dsh-providers
+```
 
 ## Usage
 
@@ -36,7 +48,8 @@ Verified against `@deepseek-ai/dsh@0.1.0-rc.6`, `@deepseek-ai/cordis@4.0.1`, Nod
 ## Development
 
 ```sh
-pnpm install   # deps; `prepare` builds lib/
+pnpm install   # deps
+pnpm build     # builds lib/ — committed, so rebuild and include it with source changes
 pnpm check     # oxlint + tsc + knip
 ```
 

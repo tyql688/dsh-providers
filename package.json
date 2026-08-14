@@ -57,8 +57,7 @@
     "build": "tsdown && tsc -p tsconfig.json --emitDeclarationOnly && tsc -p tsconfig.client.json --emitDeclarationOnly",
     "check": "pnpm lint && pnpm check-types && knip",
     "check-types": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.client.json --noEmit",
-    "lint": "oxlint --max-warnings=0",
-    "prepare": "tsdown && tsc -p tsconfig.json --emitDeclarationOnly --noCheck && tsc -p tsconfig.client.json --emitDeclarationOnly --noCheck"
+    "lint": "oxlint --max-warnings=0"
   },
   "license": "MIT",
   "packageManager": "pnpm@10.18.0",
