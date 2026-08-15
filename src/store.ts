@@ -19,6 +19,7 @@ import type {
   CredentialStore,
   OAuthCredential,
 } from '@earendil-works/pi-ai'
+import { adoptCodexTokens, isLinkedCodexCredential, mirrorCodexTokens } from './import.ts'
 import { providerRef } from './refs.ts'
 
 /** Owner-only permissions for a document holding refresh tokens. */
@@ -308,8 +309,26 @@ export class AuthStore implements CredentialStore {
     return this.locked(async () => {
       const document = await this.loadFresh()
       const current = await this.readEntry(document, providerId)
-      const next = await fn(current)
+      let next: Credential | undefined
+      try {
+        next = await fn(current)
+      } catch (error) {
+        // A linked Codex chain rotates in two places: when the CLI refreshed
+        // first, our refresh token is already consumed and the refresh here
+        // throws. The CLI's file then holds the live chain — adopt it rather
+        // than surface a dead credential.
+        const adopted = isLinkedCodexCredential(current) ? await adoptCodexTokens(current) : undefined
+        if (adopted === undefined) throw error
+        next = adopted
+      }
       if (next === undefined) return current
+      if (isLinkedCodexCredential(current) && next.type === 'oauth') {
+        // pi-ai's refresh builds a fresh credential without our marker; carry
+        // it, and hand the rotated tokens back to the CLI's file so the CLI
+        // stays signed in on the same chain.
+        next = { ...next, linkedCodexCli: true }
+        await mirrorCodexTokens(next)
+      }
       await this.save(await this.writeEntry(document, providerId, next))
       return next
     })

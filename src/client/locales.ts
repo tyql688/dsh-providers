@@ -58,6 +58,12 @@ export const zh = {
   removeRouteHint: '那条记录可能还带着你自己改过的模型列表或网关地址，默认保留。',
   noMethods: '这个提供方没有可交互的登录方式，它使用本机凭据（如 AWS 配置文件、ADC 文件）。',
 
+  importFrom: '使用 {source} 登录',
+  importing: '关联中…',
+  importTitle: '使用 {source} 的登录？',
+  importDescription: '直接使用本机已有的登录，无需再登录一次。之后令牌会与 {source} 双向同步：任何一边刷新，另一边继续可用。',
+  importConfirm: '关联',
+
   loginTitle: '登录 {provider}',
   openLink: '打开授权页面',
   copyLink: '复制链接',
@@ -132,6 +138,12 @@ export const en: Record<keyof typeof zh, string> = {
   removeRoute: 'Also remove it from the Models page',
   removeRouteHint: 'That entry may still carry a model list or gateway URL you edited yourself, so it is kept by default.',
   noMethods: 'This provider offers no interactive login; it uses local credentials such as an AWS profile or ADC files.',
+
+  importFrom: 'Use {source} login',
+  importing: 'Linking…',
+  importTitle: 'Use the {source} login?',
+  importDescription: 'Uses the login already on this machine, no fresh sign-in needed. Tokens then stay in sync with {source} both ways: whichever side refreshes, the other keeps working.',
+  importConfirm: 'Link',
 
   loginTitle: 'Sign in to {provider}',
   openLink: 'Open the authorization page',

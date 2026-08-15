@@ -12,7 +12,12 @@ import { bindSnapshotSelector } from '@deepseek-ai/dsh-client-web-react'
 import type {} from '@deepseek-ai/dsh-client-ui-settings/client'
 // Type-only: pulls the locale plugin's Context merge (ctx.locale).
 import type {} from '@deepseek-ai/dsh-client-locale/client'
+// Type-only: the composer's SlotMap merge (the 'conversation.input.model' seat).
+import type {} from '@deepseek-ai/dsh-client-ui-conversation/client'
+// Type-only: ctx.modelDirectories, ctx.sessions, and the `model` locale namespace.
+import type {} from '@deepseek-ai/dsh-client-ui-model-selection/client'
 import { AccountsSection } from './AccountsSection.tsx'
+import { ModelSeat } from './ModelSeat.tsx'
 import type { AccountsSectionInjected } from './AccountsSection.tsx'
 import { en, zh } from './locales.ts'
 import type { AccountsKey } from './locales.ts'
@@ -60,4 +65,31 @@ export function apply(ctx: Context): void {
     label: () => t('nav'),
     inject: injected,
   }, AccountsSection))
+
+  // The composer model seat, re-rendered with brand glyphs. It SHADOWS the
+  // stock occupant (single slots render the lowest priority) and reuses that
+  // plugin's own directory service and `model` copy, so unloading this plugin
+  // simply restores the stock seat. Registration waits on both services, so
+  // a composition without the model-selection plugin registers nothing.
+  ctx.inject(['slots', 'modelDirectories', 'sessions'], (scope) => {
+    scope.slots.inject('conversation.input.model', () => scope.slots.register({
+      name: 'conversation.input.model',
+      locale: 'model',
+      priority: -1,
+      inject: (sessionId) => {
+        const directory = scope.modelDirectories.directoryFor(sessionId)
+        const available = scope.sessions.subagentAddress(sessionId) === undefined
+        return {
+          available,
+          directory: directory.store,
+          load: () => {
+            if (available) directory.load().catch(() => {})
+          },
+          select: selection => available
+            ? directory.select(selection).then(() => true, () => false)
+            : Promise.resolve(false),
+        }
+      },
+    }, ModelSeat))
+  })
 }

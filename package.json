@@ -58,8 +58,7 @@
     "catalog": "node scripts/pi-ai-catalog.mjs",
     "check": "pnpm lint && pnpm check-types && knip",
     "check-types": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.client.json --noEmit",
-    "lint": "oxlint --max-warnings=0",
-    "test": "node --test \"test/**/*.test.mjs\""
+    "lint": "oxlint --max-warnings=0"
   },
   "license": "MIT",
   "packageManager": "pnpm@10.18.0",
@@ -70,6 +69,8 @@
     "@deepseek-ai/cordis": "^4.0.1",
     "@deepseek-ai/dsh-atomic-write": "^0.1.0-rc.6",
     "@deepseek-ai/dsh-client-locale": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-client-ui-conversation": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-client-ui-model-selection": "^0.1.0-rc.6",
     "@deepseek-ai/dsh-client-ui-primitives": "^0.1.0-rc.6",
     "@deepseek-ai/dsh-client-ui-settings": "^0.1.0-rc.6",
     "@deepseek-ai/dsh-client-ui-slots": "^0.1.0-rc.6",
@@ -84,6 +85,14 @@
     "@deepseek-ai/schemastery": "^3.18.1",
     "react": "^18.2.0"
   },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/dsh-client-ui-conversation": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-client-ui-model-selection": {
+      "optional": true
+    }
+  },
   "devDependencies": {
     "@deepseek-ai/cordis": "^4.0.1",
     "@deepseek-ai/dsh": "0.1.0-rc.6",
@@ -91,6 +100,8 @@
     "@deepseek-ai/dsh-attachment": "^0.1.0-rc.6",
     "@deepseek-ai/dsh-brand": "^0.1.0-rc.6",
     "@deepseek-ai/dsh-client-locale": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-client-ui-conversation": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-client-ui-model-selection": "0.1.0-rc.6",
     "@deepseek-ai/dsh-client-ui-primitives": "^0.1.0-rc.6",
     "@deepseek-ai/dsh-client-ui-settings": "^0.1.0-rc.6",
     "@deepseek-ai/dsh-client-ui-slots": "^0.1.0-rc.6",

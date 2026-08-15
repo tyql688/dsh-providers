@@ -28,8 +28,12 @@ export interface ProviderRowProps {
   expandedModels: boolean
   /** The endpoint being edited for discovery, or null while the field is closed. */
   discovering: string | null
+  /** Whether this provider's CLI-login import is in flight. */
+  importing: boolean
   onToggle: (providerId: string) => void
   onLogin: (providerId: string, method: AuthTypeName) => void
+  /** Ask to adopt the detected local CLI login shown on this row. */
+  onAskImport: (providerId: string) => void
   onRoute: (providerId: string) => void
   onUpdateCatalog: (providerId: string) => void
   onAskDiscover: (providerId: string | null, baseURL?: string) => void
@@ -91,8 +95,8 @@ function methodLabel(
 
 /** Render one provider row and, while open, its card. */
 export function ProviderRow({
-  view, open, t, loggingOut, routing, updating, expandedModels, discovering,
-  onToggle, onLogin, onRoute, onUpdateCatalog, onAskDiscover, onEditDiscoverUrl,
+  view, open, t, loggingOut, routing, updating, expandedModels, discovering, importing,
+  onToggle, onLogin, onAskImport, onRoute, onUpdateCatalog, onAskDiscover, onEditDiscoverUrl,
   onDiscover, onToggleModels, onAskLogout,
 }: ProviderRowProps) {
   const expired = view.expires !== undefined && view.expires <= Date.now()
@@ -218,6 +222,15 @@ export function ProviderRow({
                 {methodLabel(method, connected, t)}
               </Button>
             ))}
+            {view.importSource !== undefined && (
+              <Button
+                variant="outline"
+                disabled={importing}
+                onClick={() => onAskImport(view.id)}
+              >
+                {importing ? t('importing') : t('importFrom', { source: view.importSource })}
+              </Button>
+            )}
             {/* Sign-out is the action here nothing undoes, so it is styled
                 apart from the buttons that add things. */}
             {connected && (

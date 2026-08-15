@@ -21,8 +21,12 @@ export interface ProviderRowProps {
     expandedModels: boolean;
     /** The endpoint being edited for discovery, or null while the field is closed. */
     discovering: string | null;
+    /** Whether this provider's CLI-login import is in flight. */
+    importing: boolean;
     onToggle: (providerId: string) => void;
     onLogin: (providerId: string, method: AuthTypeName) => void;
+    /** Ask to adopt the detected local CLI login shown on this row. */
+    onAskImport: (providerId: string) => void;
     onRoute: (providerId: string) => void;
     onUpdateCatalog: (providerId: string) => void;
     onAskDiscover: (providerId: string | null, baseURL?: string) => void;
@@ -32,4 +36,4 @@ export interface ProviderRowProps {
     onAskLogout: (providerId: string) => void;
 }
 /** Render one provider row and, while open, its card. */
-export declare function ProviderRow({ view, open, t, loggingOut, routing, updating, expandedModels, discovering, onToggle, onLogin, onRoute, onUpdateCatalog, onAskDiscover, onEditDiscoverUrl, onDiscover, onToggleModels, onAskLogout, }: ProviderRowProps): import("react").JSX.Element;
+export declare function ProviderRow({ view, open, t, loggingOut, routing, updating, expandedModels, discovering, importing, onToggle, onLogin, onAskImport, onRoute, onUpdateCatalog, onAskDiscover, onEditDiscoverUrl, onDiscover, onToggleModels, onAskLogout, }: ProviderRowProps): import("react").JSX.Element;

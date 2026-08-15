@@ -6,7 +6,7 @@
  */
 
 import { useEffect } from 'react'
-import { Button, IconSearchOutline16, Input } from '@deepseek-ai/dsh-client-ui-primitives'
+import { Button, IconSearchOutline16, Input, Modal } from '@deepseek-ai/dsh-client-ui-primitives'
 import type { SnapshotSelectorHook, Translate } from '@deepseek-ai/dsh-client-ui-slots'
 import type { AuthTypeName, ProviderView, RefreshCatalogResponse } from '../wire.ts'
 import { LoginDialog } from './LoginDialog.tsx'
@@ -95,6 +95,8 @@ function Page({ controller, useSnapshot, t }: AccountsSectionInjected) {
   const expandedModels = useSnapshot(state => state.expandedModels)
   const discovering = useSnapshot(state => state.discovering)
   const confirmingLogout = useSnapshot(state => state.confirmingLogout)
+  const confirmingImport = useSnapshot(state => state.confirmingImport)
+  const importing = useSnapshot(state => state.importing)
 
   useEffect(() => {
     void controller.load()
@@ -143,6 +145,7 @@ function Page({ controller, useSnapshot, t }: AccountsSectionInjected) {
       controller.expandModels(expandedModels === providerId ? null : providerId)
     },
     onAskLogout: (providerId: string) => controller.askLogout(providerId),
+    onAskImport: (providerId: string) => controller.askImport(providerId),
   }
 
   const group = (label: string, rows: readonly ProviderView[]) => rows.length === 0
@@ -158,6 +161,7 @@ function Page({ controller, useSnapshot, t }: AccountsSectionInjected) {
             loggingOut={loggingOut === view.id}
             routing={routing === view.id}
             updating={updating === view.id || updating === ALL_PROVIDERS}
+            importing={importing === view.id}
             expandedModels={expandedModels === view.id}
             discovering={discovering?.provider === view.id ? discovering.baseURL : null}
             {...rowProps}
@@ -226,6 +230,31 @@ function Page({ controller, useSnapshot, t }: AccountsSectionInjected) {
             t={t}
             onCancel={() => controller.askLogout(null)}
             onConfirm={removeRoute => void controller.logout(confirmingLogout, removeRoute)}
+          />
+        )
+      })()}
+
+      {confirmingImport !== null && (() => {
+        const target = providers.find(candidate => candidate.id === confirmingImport)
+        return (
+          <Modal
+            open
+            onClose={() => controller.askImport(null)}
+            title={t('importTitle', { source: target?.importSource ?? '' })}
+            closeLabel={t('close')}
+            description={t('importDescription')}
+            footer={(
+              <div className={styles.actions}>
+                <Button variant="ghost" onClick={() => controller.askImport(null)}>{t('cancel')}</Button>
+                <Button
+                  variant="primary"
+                  disabled={importing === confirmingImport}
+                  onClick={() => void controller.importCredential(confirmingImport)}
+                >
+                  {importing === confirmingImport ? t('importing') : t('importConfirm')}
+                </Button>
+              </div>
+            )}
           />
         )
       })()}

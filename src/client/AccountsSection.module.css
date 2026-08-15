@@ -542,3 +542,241 @@ body[data-ds-dark-theme] .lightOnly {
   color: var(--dsw-alias-label-tertiary);
   font-size: 12px;
 }
+
+/* ── composer model seat ─────────────────────────────────────────────── */
+
+/* Anchor for the floating menu; the trigger itself stays composer-compact. */
+.seatRoot {
+  position: relative;
+  display: inline-flex;
+}
+
+.seatTrigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 260px;
+  height: 26px;
+  padding: 0 8px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--dsw-alias-label-secondary);
+  font-size: 12px;
+  line-height: 18px;
+  cursor: pointer;
+}
+
+.seatTrigger:hover {
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+.seatTrigger:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.seatTriggerLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.seatTriggerEffort {
+  flex-shrink: 0;
+  color: var(--dsw-alias-label-tertiary);
+}
+
+.seatChevron,
+.seatChevronOpen {
+  flex-shrink: 0;
+  color: var(--dsw-alias-label-tertiary);
+  transition: transform 0.15s ease;
+}
+
+.seatChevronOpen {
+  transform: rotate(180deg);
+}
+
+/* The composer sits at the bottom, so the menu opens upward. */
+.seatMenu {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  right: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  min-width: 260px;
+  max-width: 340px;
+  padding: 4px;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 10px;
+  background: var(--dsw-alias-bg-layer-2);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 12%);
+}
+
+.seatCell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--dsw-alias-label-primary);
+  font-size: 12px;
+  line-height: 18px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.seatCell:hover {
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+.seatCellLabel {
+  flex-shrink: 0;
+  color: var(--dsw-alias-label-secondary);
+}
+
+.seatCellValue {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+  justify-content: flex-end;
+}
+
+/* The glyph stays put; a long value truncates with its full text on hover. */
+.seatCellValue > :first-child {
+  flex-shrink: 0;
+}
+
+.seatCellValueText {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.seatCellChevron {
+  flex-shrink: 0;
+  color: var(--dsw-alias-label-tertiary);
+}
+
+.seatGroups {
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.seatGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+/* The brand mark is the group identity; the name confirms it. */
+.seatGroupTitle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px 4px;
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 11px;
+  line-height: 16px;
+}
+
+.seatOption {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--dsw-alias-label-primary);
+  font-size: 12px;
+  line-height: 18px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.seatOption:hover {
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+.seatOption:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.seatSelected {
+  color: var(--dsw-alias-label-primary);
+  font-weight: 500;
+}
+
+.seatOptionCopy {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.seatOptionName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.seatOptionDescription {
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 11px;
+  line-height: 15px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.seatCheck {
+  flex-shrink: 0;
+  width: 16px;
+  color: var(--dsw-alias-state-business-primary);
+}
+
+.seatStatus,
+.seatEmpty {
+  padding: 8px 10px;
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.seatError,
+.seatWarning {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.seatError {
+  color: var(--dsw-alias-state-error-primary);
+}
+
+.seatWarning {
+  color: var(--dsw-alias-state-warn-label);
+}
+
+.seatRetry {
+  flex-shrink: 0;
+  border: none;
+  padding: 0;
+  background: transparent;
+  color: var(--dsw-alias-label-secondary);
+  font-size: 12px;
+  text-decoration: underline;
+  cursor: pointer;
+}

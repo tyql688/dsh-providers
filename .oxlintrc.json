@@ -40,10 +40,9 @@
   },
   "overrides": [
     {
-      // CLI scripts and tests report through stdout by design.
+      // CLI scripts report through stdout by design.
       "files": [
-        "scripts/**/*.mjs",
-        "test/**/*.mjs"
+        "scripts/**/*.mjs"
       ],
       "rules": {
         "no-console": "off"
@@ -55,7 +54,9 @@
       "files": [
         "src/routes.ts",
         "src/login.ts",
-        "src/credentials.ts"
+        "src/credentials.ts",
+        "src/client/index.ts",
+        "src/client/ModelSeat.tsx"
       ],
       "rules": {
         "promise/prefer-await-to-then": "off"

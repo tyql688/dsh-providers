@@ -33,9 +33,10 @@ import type {
   MutableModels,
   Provider,
 } from '@earendil-works/pi-ai'
-import { errorMessage } from './errors.ts'
+import { BadRequest, errorMessage } from './errors.ts'
 import { LoginSessions } from './login.ts'
 import type { LoginSession } from './login.ts'
+import { CODEX_PROVIDER_ID, CODEX_SOURCE_LABEL, detectCodexLogin, readCodexCredential } from './import.ts'
 import { providerRef } from './refs.ts'
 import { mergeModels, planRoutes, retainServed, soleRoute } from './catalog.ts'
 import type { MergedModel, RouteSpec } from './catalog.ts'
@@ -246,6 +247,13 @@ export interface ProviderAuthService {
   discoverEndpoint(providerId: string, baseURL?: string): Promise<number>
   /** Remove a provider's credential, optionally removing its llm route too. */
   logout(providerId: string, removeRoute?: boolean): Promise<void>
+  /**
+   * Link a detected local CLI login as this provider's stored credential and
+   * route the provider, exactly as a successful sign-in would. The chain is
+   * shared, not copied: refreshed tokens mirror back into the CLI's file, and
+   * a rotation the CLI performed first is adopted from that file.
+   */
+  importCredential(providerId: string): Promise<void>
 }
 
 declare module '@deepseek-ai/cordis' {
@@ -542,6 +550,7 @@ class AuthCredentialProvider extends LocalCredentialProvider implements KeyPort 
       refreshCatalog: (providerId, force) => this.serialize(() => this.refreshCatalog(providerId, force)),
       discoverEndpoint: (providerId, baseURL) => this.serialize(() => this.discoverEndpoint(providerId, baseURL)),
       logout: (providerId, removeRoute) => this.serialize(() => this.logout(providerId, removeRoute)),
+      importCredential: providerId => this.serialize(() => this.importCredential(providerId)),
     }
   }
 
@@ -629,6 +638,11 @@ class AuthCredentialProvider extends LocalCredentialProvider implements KeyPort 
     if (credential === 'oauth') {
       const oauth = await this.store.readOAuth(provider.id)
       if (oauth !== undefined) view.expires = oauth.expires
+    }
+    // Offer adopting a local CLI login only while nothing is stored here:
+    // once signed in (either way), the import button would just be clutter.
+    if (provider.id === CODEX_PROVIDER_ID && credential === undefined && await detectCodexLogin()) {
+      view.importSource = CODEX_SOURCE_LABEL
     }
     if (view.routed) {
       const models = await this.routedModels(provider.id)
@@ -1051,6 +1065,16 @@ class AuthCredentialProvider extends LocalCredentialProvider implements KeyPort 
   private async logout(providerId: string, removeRoute = false): Promise<void> {
     await this.models.logout(providerId)
     if (removeRoute) await unroute(this.ctx, providerId, providerRef(providerId))
+  }
+
+  /** Adopt a local CLI login as the stored credential, then route as a sign-in would. */
+  private async importCredential(providerId: string): Promise<void> {
+    if (providerId !== CODEX_PROVIDER_ID) {
+      throw new BadRequest(`dsh-providers: no local login import exists for ${providerId}`)
+    }
+    const credential = await readCodexCredential()
+    await this.store.modify(providerId, async () => credential)
+    if (this.autoRoute) await this.routeProvider(providerId, credential)
   }
 }
 

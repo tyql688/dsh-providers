@@ -111,6 +111,10 @@ export interface AccountsState {
   discovering: { provider: string; baseURL: string } | null
   /** Provider whose sign-out is awaiting confirmation. */
   confirmingLogout: string | null
+  /** Provider whose CLI-login import is awaiting confirmation. */
+  confirmingImport: string | null
+  /** Provider whose CLI-login import is in flight. */
+  importing: string | null
 }
 
 const INITIAL: AccountsState = {
@@ -127,6 +131,8 @@ const INITIAL: AccountsState = {
   expandedModels: null,
   discovering: null,
   confirmingLogout: null,
+  confirmingImport: null,
+  importing: null,
 }
 
 /** Whether a provider can serve a request right now. */
@@ -498,6 +504,27 @@ export class AccountsStore {
       this.set({ error: errorMessage(error) })
     } finally {
       this.release('loggingOut', providerId)
+    }
+  }
+
+  /** Ask for confirmation before importing a CLI login; the first refresh may sign the CLI out. */
+  askImport(providerId: string | null): void {
+    this.set({ confirmingImport: providerId })
+  }
+
+  /** Adopt a detected local CLI login for one provider and reload the page. */
+  async importCredential(providerId: string): Promise<void> {
+    this.set({ importing: providerId, confirmingImport: null })
+    try {
+      await this.call('import-credential', {
+        method: 'POST',
+        body: JSON.stringify({ provider: providerId }),
+      })
+      await this.load()
+    } catch (error) {
+      this.set({ error: errorMessage(error) })
+    } finally {
+      if (this.state.importing === providerId) this.set({ importing: null })
     }
   }
 

@@ -98,6 +98,10 @@ export interface AccountsState {
     } | null;
     /** Provider whose sign-out is awaiting confirmation. */
     confirmingLogout: string | null;
+    /** Provider whose CLI-login import is awaiting confirmation. */
+    confirmingImport: string | null;
+    /** Provider whose CLI-login import is in flight. */
+    importing: string | null;
 }
 /** Whether a provider can serve a request right now. */
 export declare function providerUsable(view: ProviderView): boolean;
@@ -176,6 +180,10 @@ export declare class AccountsStore {
     route(providerId: string): Promise<void>;
     /** Remove one provider's credential. */
     logout(providerId: string, removeRoute: boolean): Promise<void>;
+    /** Ask for confirmation before importing a CLI login; the first refresh may sign the CLI out. */
+    askImport(providerId: string | null): void;
+    /** Adopt a detected local CLI login for one provider and reload the page. */
+    importCredential(providerId: string): Promise<void>;
     /** Close any open stream; called when the plugin unloads. */
     dispose(): void;
 }

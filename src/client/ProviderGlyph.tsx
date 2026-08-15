@@ -139,6 +139,9 @@ const GLYPHS: Readonly<Record<string, IconType>> = {
  */
 const KEYWORD_GLYPHS: readonly (readonly [string, IconType])[] = [
   // Aggregators and inference clouds, whose URLs often also name a model brand.
+  // `opencode` must precede the model vendors: its split routes are NAMED
+  // after protocols ("OpenCode Go · Anthropic"), and the gateway is the brand.
+  ['opencode', OpenCodeMono],
   ['openrouter', OpenRouterColor],
   ['siliconflow', SiliconCloudColor],
   ['silicon', SiliconCloudColor],
@@ -241,11 +244,29 @@ export interface ProviderGlyphProps {
 }
 
 /**
+ * The provider id with a split-route protocol suffix removed: the composer's
+ * groups are ROUTES, and a multi-protocol provider's overflow routes are
+ * `<provider>-<suffix>` (the suffix set the Host's route planning writes). The
+ * stem is where the brand lives — `opencode-go-anthropic` is OpenCode's
+ * route, not Anthropic's.
+ */
+function routeStem(provider: string): string {
+  for (const suffix of ['completions', 'responses', 'anthropic']) {
+    if (provider.endsWith(`-${suffix}`)) return provider.slice(0, -(suffix.length + 1))
+  }
+  return provider
+}
+
+/**
  * Render one provider's brand mark.
  * @returns the glyph, a keyword-matched glyph, or a first-letter monogram for
  *   a brand nothing recognizes.
  */
-export function ProviderGlyph({ provider, displayName, baseURL, size = 18 }: ProviderGlyphProps) {
+export function ProviderGlyph({ provider: routeId, displayName, baseURL, size = 18 }: ProviderGlyphProps) {
+  // The full id first: real provider ids can END in a protocol word
+  // (`azure-openai-responses`), so the stem only serves ids the tables do
+  // not know outright.
+  const provider = routeId in THEMED_GLYPHS || routeId in GLYPHS ? routeId : routeStem(routeId)
   const themed = THEMED_GLYPHS[provider]
   if (themed !== undefined) {
     return (

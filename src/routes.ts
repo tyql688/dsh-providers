@@ -20,6 +20,7 @@ import type {
   DiscoverEndpointRequest,
   DiscoverEndpointResponse,
   ErrorResponse,
+  ImportCredentialRequest,
   LoginEvent,
   LoginRequest,
   LoginStartResponse,
@@ -146,6 +147,7 @@ const OPERATION_METHODS: Record<string, 'GET' | 'POST'> = {
   route: 'POST',
   'refresh-catalog': 'POST',
   'discover-endpoint': 'POST',
+  'import-credential': 'POST',
   logout: 'POST',
 }
 
@@ -273,6 +275,15 @@ async function handle(ctx: Context, req: IncomingMessage, res: ServerResponse): 
     // updates every routed provider at once.
     const result = await ctx.providerAuth.refreshCatalog(body.provider, body.force === true)
     sendJson(res, 200, result)
+    return
+  }
+
+  if (operation === 'import-credential') {
+    const body = await readJson<ImportCredentialRequest>(req)
+    const provider = providerOf(res, body)
+    if (provider === undefined) return
+    await ctx.providerAuth.importCredential(provider)
+    sendJson(res, 200, {})
     return
   }
 

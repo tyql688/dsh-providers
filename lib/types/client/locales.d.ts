@@ -51,6 +51,11 @@ export declare const zh: {
     removeRoute: string;
     removeRouteHint: string;
     noMethods: string;
+    importFrom: string;
+    importing: string;
+    importTitle: string;
+    importDescription: string;
+    importConfirm: string;
     loginTitle: string;
     openLink: string;
     copyLink: string;

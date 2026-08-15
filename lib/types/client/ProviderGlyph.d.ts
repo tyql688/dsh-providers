@@ -25,4 +25,4 @@ export interface ProviderGlyphProps {
  * @returns the glyph, a keyword-matched glyph, or a first-letter monogram for
  *   a brand nothing recognizes.
  */
-export declare function ProviderGlyph({ provider, displayName, baseURL, size }: ProviderGlyphProps): import("react").JSX.Element;
+export declare function ProviderGlyph({ provider: routeId, displayName, baseURL, size }: ProviderGlyphProps): import("react").JSX.Element;

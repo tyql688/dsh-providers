@@ -75,6 +75,13 @@ export interface ProviderAuthService {
     discoverEndpoint(providerId: string, baseURL?: string): Promise<number>;
     /** Remove a provider's credential, optionally removing its llm route too. */
     logout(providerId: string, removeRoute?: boolean): Promise<void>;
+    /**
+     * Link a detected local CLI login as this provider's stored credential and
+     * route the provider, exactly as a successful sign-in would. The chain is
+     * shared, not copied: refreshed tokens mirror back into the CLI's file, and
+     * a rotation the CLI performed first is adopted from that file.
+     */
+    importCredential(providerId: string): Promise<void>;
 }
 declare module '@deepseek-ai/cordis' {
     interface Context {
@@ -302,5 +309,7 @@ declare class AuthCredentialProvider extends LocalCredentialProvider implements 
     private discoverEndpoint;
     /** Remove a provider's credential, optionally removing its llm routes too. */
     private logout;
+    /** Adopt a local CLI login as the stored credential, then route as a sign-in would. */
+    private importCredential;
 }
 export default AuthCredentialProvider;

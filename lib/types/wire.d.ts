@@ -73,6 +73,16 @@ export interface ProviderView {
      * deployment has not made.
      */
     models?: ModelView[];
+    /**
+     * Label of a local CLI login this plugin could adopt (e.g. `Codex CLI`),
+     * present only while the provider itself is signed out. Detection only —
+     * the tokens never travel; the import happens Host-side on explicit request.
+     */
+    importSource?: string;
+}
+/** Body of `POST import-credential`: adopt a detected local CLI login for one provider. */
+export interface ImportCredentialRequest {
+    provider: string;
 }
 /** One model the provider's live routes serve. */
 export interface ModelView {
