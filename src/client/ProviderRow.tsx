@@ -109,7 +109,7 @@ export function ProviderRow({
         className={styles.rowSummary}
         onClick={() => onToggle(view.id)}
       >
-        <ProviderGlyph provider={view.id} displayName={view.displayName} />
+        <ProviderGlyph provider={view.id} displayName={view.displayName} baseURL={view.baseURL} />
         <span className={styles.rowName}>{view.displayName}</span>
         {subscription && <span className={styles.badge}>{t('subscription')}</span>}
         <span className={styles.rowStatus}>{statusText(view, t)}</span>
@@ -218,8 +218,8 @@ export function ProviderRow({
                 {methodLabel(method, connected, t)}
               </Button>
             ))}
-            {/* Sign-out is the one action here nothing undoes, so it is
-                styled apart from the buttons that add things. */}
+            {/* Sign-out is the action here nothing undoes, so it is styled
+                apart from the buttons that add things. */}
             {connected && (
               <Button
                 variant="ghost"

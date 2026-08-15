@@ -80,7 +80,10 @@ const cssModules = {
       minify: true,
     })
     const classMap: Record<string, string> = {}
-    for (const [local, exported] of Object.entries(cssExports ?? {})) classMap[local] = exported.name
+    // Sorted: lightningcss hands back hash-map order, and an unsorted map is
+    // the one thing that makes the build non-deterministic.
+    const entries = Object.entries(cssExports ?? {}).toSorted((a, b) => a[0].localeCompare(b[0]))
+    for (const [local, exported] of entries) classMap[local] = exported.name
     return [
       `const css = ${JSON.stringify(code.toString())};`,
       `const tagId = ${JSON.stringify(`${ID}/${basename(fileId)}`)};`,

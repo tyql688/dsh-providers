@@ -1,0 +1,343 @@
+{
+  "piAiVersion": "0.84.2",
+  "modelDataGeneratedAt": "2026-08-14T10:02:30.583Z",
+  "adapterVersion": "0.1.0-rc.6",
+  "adapterPiAiRange": "^0.82.1",
+  "adapterRangeSatisfied": false,
+  "adapterProtocols": [
+    "anthropic-messages",
+    "openai-completions",
+    "openai-responses"
+  ],
+  "providers": [
+    {
+      "id": "amazon-bedrock",
+      "name": "Amazon Bedrock",
+      "oauth": false,
+      "apis": [
+        "bedrock-converse-stream"
+      ]
+    },
+    {
+      "id": "ant-ling",
+      "name": "Ant Ling",
+      "oauth": false,
+      "apis": [
+        "openai-completions"
+      ]
+    },
+    {
+      "id": "anthropic",
+      "name": "Anthropic",
+      "oauth": true,
+      "apis": [
+        "anthropic-messages"
+      ]
+    },
+    {
+      "id": "azure-openai-responses",
+      "name": "Azure OpenAI",
+      "oauth": false,
+      "apis": [
+        "azure-openai-responses"
+      ]
+    },
+    {
+      "id": "baseten",
+      "name": "Baseten",
+      "oauth": false,
+      "apis": [
+        "openai-completions"
+      ]
+    },
+    {
+      "id": "cerebras",
+      "name": "Cerebras",
+      "oauth": false,
+      "apis": [
+        "openai-completions"
+      ]
+    },
+    {
+      "id": "cloudflare-ai-gateway",
+      "name": "Cloudflare AI Gateway",
+      "oauth": false,
+      "apis": [
+        "anthropic-messages",
+        "openai-completions",
+        "openai-responses"
+      ]
+    },
+    {
+      "id": "cloudflare-workers-ai",
+      "name": "Cloudflare Workers AI",
+      "oauth": false,
+      "apis": [
+        "openai-completions"
+      ]
+    },
+    {
+      "id": "deepseek",
+      "name": "DeepSeek",
+      "oauth": false,
+      "apis": [
+        "openai-completions"
+      ]
+    },
+    {
+      "id": "fireworks",
+      "name": "Fireworks",
+      "oauth": false,
+      "apis": [
+        "anthropic-messages",
+        "openai-completions"
+      ]
+    },
+    {
+      "id": "github-copilot",
+      "name": "GitHub Copilot",
+      "oauth": true,
+      "apis": [
+        "anthropic-messages",
+        "openai-completions",
+        "openai-responses"
+      ]
+    },
+    {
+      "id": "google",
+      "name": "Google",
+      "oauth": false,
+      "apis": [
+        "google-generative-ai"
+      ]
+    },
+    {
+      "id": "google-vertex",
+      "name": "Google Vertex AI",
+      "oauth": false,
+      "apis": [
+        "google-vertex"
+      ]
+    },
+    {
+      "id": "groq",
+      "name": "Groq",
+      "oauth": false,
+      "apis": [
+        "openai-completions"
+      ]
+    },
+    {
+      "id": "huggingface",
+      "name": "Hugging Face",
+      "oauth": false,
+      "apis": [
+        "openai-completions"
+      ]
+    },
+    {
+      "id": "kimi-coding",
+      "name": "Kimi For Coding",
+      "oauth": true,
+      "apis": [
+        "anthropic-messages"
+      ]
+    },
+    {
+      "id": "minimax",
+      "name": "MiniMax",
+      "oauth": false,
+      "apis": [
+        "anthropic-messages"
+      ]
+    },
+    {
+      "id": "minimax-cn",
+      "name": "MiniMax CN",
+      "oauth": false,
+      "apis": [
+        "anthropic-messages"
+      ]
+    },
+    {
+      "id": "mistral",
+      "name": "Mistral",
+      "oauth": false,
+      "apis": [
+        "mistral-conversations"
+      ]
+    },
+    {
+      "id": "moonshotai",
+      "name": "Moonshot AI",
+      "oauth": false,
+      "apis": [
+        "openai-completions"
+      ]
+    },
+    {
+      "id": "moonshotai-cn",
+      "name": "Moonshot AI CN",
+      "oauth": false,
+      "apis": [
+        "openai-completions"
+      ]
+    },
+    {
+      "id": "nvidia",
+      "name": "NVIDIA",
+      "oauth": false,
+      "apis": [
+        "openai-completions"
+      ]
+    },
+    {
+      "id": "openai",
+      "name": "OpenAI",
+      "oauth": false,
+      "apis": [
+        "openai-responses"
+      ]
+    },
+    {
+      "id": "openai-codex",
+      "name": "OpenAI Codex",
+      "oauth": true,
+      "apis": [
+        "openai-codex-responses"
+      ]
+    },
+    {
+      "id": "opencode",
+      "name": "OpenCode Zen",
+      "oauth": false,
+      "apis": [
+        "anthropic-messages",
+        "google-generative-ai",
+        "openai-completions",
+        "openai-responses"
+      ]
+    },
+    {
+      "id": "opencode-go",
+      "name": "OpenCode Go",
+      "oauth": false,
+      "apis": [
+        "anthropic-messages",
+        "openai-completions",
+        "openai-responses"
+      ]
+    },
+    {
+      "id": "openrouter",
+      "name": "OpenRouter",
+      "oauth": true,
+      "apis": [
+        "openai-completions"
+      ]
+    },
+    {
+      "id": "qwen-token-plan",
+      "name": "Qwen Token Plan",
+      "oauth": false,
+      "apis": [
+        "openai-completions"
+      ]
+    },
+    {
+      "id": "qwen-token-plan-cn",
+      "name": "Qwen Token Plan CN",
+      "oauth": false,
+      "apis": [
+        "openai-completions"
+      ]
+    },
+    {
+      "id": "qwen-token-plan-individual",
+      "name": "Qwen Token Plan Individual",
+      "oauth": false,
+      "apis": [
+        "openai-completions"
+      ]
+    },
+    {
+      "id": "radius",
+      "name": "Radius",
+      "oauth": true,
+      "apis": []
+    },
+    {
+      "id": "together",
+      "name": "Together",
+      "oauth": false,
+      "apis": [
+        "openai-completions"
+      ]
+    },
+    {
+      "id": "vercel-ai-gateway",
+      "name": "Vercel AI Gateway",
+      "oauth": false,
+      "apis": [
+        "anthropic-messages"
+      ]
+    },
+    {
+      "id": "xai",
+      "name": "xAI",
+      "oauth": true,
+      "apis": [
+        "openai-completions",
+        "openai-responses"
+      ]
+    },
+    {
+      "id": "xiaomi",
+      "name": "Xiaomi",
+      "oauth": false,
+      "apis": [
+        "openai-completions"
+      ]
+    },
+    {
+      "id": "xiaomi-token-plan-ams",
+      "name": "Xiaomi Token Plan AMS",
+      "oauth": false,
+      "apis": [
+        "openai-completions"
+      ]
+    },
+    {
+      "id": "xiaomi-token-plan-cn",
+      "name": "Xiaomi Token Plan CN",
+      "oauth": false,
+      "apis": [
+        "openai-completions"
+      ]
+    },
+    {
+      "id": "xiaomi-token-plan-sgp",
+      "name": "Xiaomi Token Plan SGP",
+      "oauth": false,
+      "apis": [
+        "openai-completions"
+      ]
+    },
+    {
+      "id": "zai",
+      "name": "Z.AI",
+      "oauth": false,
+      "apis": [
+        "openai-completions"
+      ]
+    },
+    {
+      "id": "zai-coding-cn",
+      "name": "Z.AI Coding CN",
+      "oauth": false,
+      "apis": [
+        "openai-completions"
+      ]
+    }
+  ]
+}

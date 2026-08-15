@@ -40,6 +40,16 @@
   },
   "overrides": [
     {
+      // CLI scripts and tests report through stdout by design.
+      "files": [
+        "scripts/**/*.mjs",
+        "test/**/*.mjs"
+      ],
+      "rules": {
+        "no-console": "off"
+      }
+    },
+    {
       // These files drive promise chains handed to them (SSE handler, login
       // continuations) instead of awaiting, so the rule is off there.
       "files": [

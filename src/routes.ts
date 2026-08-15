@@ -11,7 +11,7 @@ import type { IncomingMessage, ServerResponse } from 'node:http'
 import type { Context } from '@deepseek-ai/cordis'
 // Type-only: pulls the web carrier's Context merge (ctx.webServer).
 import type {} from '@deepseek-ai/dsh-host-webserver'
-import { errorMessage } from './errors.ts'
+import { BadRequest, errorMessage } from './errors.ts'
 import { isTrustedAccountRequest } from './trust.ts'
 import { PROVIDERS_ROUTE_PREFIX } from './wire.ts'
 import type {
@@ -31,9 +31,6 @@ import type {
 
 /** Largest request body accepted; every payload here is a few short fields. */
 const MAX_BODY_BYTES = 64 * 1024
-
-/** A refusal the client caused, answered 400; everything else answers 500. */
-class BadRequest extends Error {}
 
 /** SSE keep-alive period, below the common 60s idle timeout of intermediaries. */
 const HEARTBEAT_MS = 25_000

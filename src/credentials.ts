@@ -10,8 +10,10 @@
  */
 
 import { access } from 'node:fs/promises'
+import { createRequire } from 'node:module'
 import { homedir } from 'node:os'
-import { isAbsolute, join, resolve as resolvePath } from 'node:path'
+import { dirname, isAbsolute, join, resolve as resolvePath } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import type { Context } from '@deepseek-ai/cordis'
 import z from '@deepseek-ai/schemastery'
 import { credentialRef } from '@deepseek-ai/dsh-credentials'
@@ -22,10 +24,6 @@ import { LocalCredentialProvider } from '@deepseek-ai/dsh-credentials-local'
 import type {} from '@deepseek-ai/dsh-llm'
 import type { Config as LocalConfig } from '@deepseek-ai/dsh-credentials-local'
 import { resolveDshHome } from '@deepseek-ai/dsh-home-paths'
-// This plugin's pi-ai and the shipped adapter's are separate installs with
-// different provider catalogs (README, "Two pi-ai copies"), so this page can
-// offer a provider whose route the adapter then fails to build.
-// `awaitLiveRoutes` keeps that from becoming the user's problem.
 import { builtinModels, getBuiltinModelDataGeneratedAt } from '@earendil-works/pi-ai/providers/all'
 import type {
   AuthContext,
@@ -120,6 +118,60 @@ function countModels(specs: readonly RouteSpec[]): number {
 
 /** Source label reported for a reference answered by a signed-in account. */
 const OAUTH_SOURCE = 'oauth'
+
+/**
+ * The version skew between this plugin's bundled pi-ai and the installed
+ * adapter, for route-failure messages. The two are separate installs with
+ * separate catalogs, so "the adapter cannot serve this" is usually a version
+ * gap — naming both sides turns a dead end into a diagnosis.
+ */
+function piAiVersionSkew(): string {
+  interface Manifest { name?: string; version?: string; dependencies?: Record<string, string> }
+  interface Found { manifest: Manifest; dir: string }
+  // Everything sits inside one try: this helper runs on error paths, and a
+  // resolution failure here must cost only the diagnosis, never replace the
+  // original error with its own.
+  const manifestOf = (name: string, specifier: string): Found | undefined => {
+    try {
+      const require = createRequire(import.meta.url)
+      // Walk up from a resolvable file: neither package exports `./package.json`.
+      let dir = dirname(fileURLToPath(import.meta.resolve(specifier)))
+      for (let depth = 0; depth < 6; depth++) {
+        try {
+          const manifest = require(join(dir, 'package.json')) as Manifest
+          if (manifest.name === name) return { manifest, dir }
+        } catch {
+          // keep walking
+        }
+        dir = dirname(dir)
+      }
+    } catch {
+      // A packaging layout this walk cannot read only costs the diagnosis.
+    }
+    return undefined
+  }
+  const plugin = manifestOf('@earendil-works/pi-ai', '@earendil-works/pi-ai/providers/all')?.manifest.version ?? 'unknown'
+  const adapter = manifestOf('@deepseek-ai/dsh-llm-pi-ai', '@deepseek-ai/dsh-llm-pi-ai')
+  // The adapter's own pi-ai is a separate install nested under it; its actual
+  // version beats the declared range as a diagnosis. Fall back to the range.
+  let adapterPiAi = adapter?.manifest.dependencies?.['@earendil-works/pi-ai'] ?? 'unknown'
+  if (adapter !== undefined) {
+    // npm nests it inside the package; pnpm links it beside the package's
+    // scope dir. Reading the file directly sidesteps pi-ai's export map.
+    for (const base of [join(adapter.dir, 'node_modules'), dirname(dirname(adapter.dir))]) {
+      try {
+        const nested = createRequire(import.meta.url)(join(base, '@earendil-works', 'pi-ai', 'package.json')) as Manifest
+        if (nested.name === '@earendil-works/pi-ai' && nested.version !== undefined) {
+          adapterPiAi = nested.version
+          break
+        }
+      } catch {
+        // The range already stands in.
+      }
+    }
+  }
+  return `this plugin bundles pi-ai ${plugin}; the adapter is llm-pi-ai ${adapter?.manifest.version ?? 'unknown'} on pi-ai ${adapterPiAi}`
+}
 
 /** How long a freshly written route is given to become a live LLM route. */
 const ROUTE_ACTIVATION_TIMEOUT_MS = 2_000
@@ -329,7 +381,7 @@ class AuthCredentialProvider extends LocalCredentialProvider implements KeyPort 
     return run
   }
 
-  /** Every installed pi-ai provider id. */
+  /** Every provider id this plugin serves: the installed pi-ai catalog. */
   private providerIds(): string[] {
     return this.models.getProviders().map(provider => provider.id)
   }
@@ -739,7 +791,7 @@ class AuthCredentialProvider extends LocalCredentialProvider implements KeyPort 
       + `${declared === undefined
         ? ' — it speaks a wire protocol the adapter only reaches through its own catalog, which this dsh release does not carry'
         : ' — even described in full'}`
-      + ', so its route was left as it was',
+      + `, so its route was left as it was (${piAiVersionSkew()})`,
     )
   }
 
@@ -822,7 +874,7 @@ class AuthCredentialProvider extends LocalCredentialProvider implements KeyPort 
     )))
     throw new Error(
       'dsh-providers: the installed llm adapter would not serve the updated routes,'
-      + ' so the previous ones were put back',
+      + ` so the previous ones were put back (${piAiVersionSkew()})`,
     )
   }
 

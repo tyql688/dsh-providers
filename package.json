@@ -55,14 +55,16 @@
   },
   "scripts": {
     "build": "tsdown && tsc -p tsconfig.json --emitDeclarationOnly && tsc -p tsconfig.client.json --emitDeclarationOnly",
+    "catalog": "node scripts/pi-ai-catalog.mjs",
     "check": "pnpm lint && pnpm check-types && knip",
     "check-types": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.client.json --noEmit",
-    "lint": "oxlint --max-warnings=0"
+    "lint": "oxlint --max-warnings=0",
+    "test": "node --test \"test/**/*.test.mjs\""
   },
   "license": "MIT",
   "packageManager": "pnpm@10.18.0",
   "dependencies": {
-    "@earendil-works/pi-ai": "^0.84.1"
+    "@earendil-works/pi-ai": "~0.84.2"
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": "^4.0.1",

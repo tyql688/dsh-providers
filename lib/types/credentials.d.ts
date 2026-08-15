@@ -115,7 +115,7 @@ declare class AuthCredentialProvider extends LocalCredentialProvider implements 
      * endpoint discovery) could roll each other's committed work back.
      */
     private serialize;
-    /** Every installed pi-ai provider id. */
+    /** Every provider id this plugin serves: the installed pi-ai catalog. */
     private providerIds;
     /**
      * Ambient lookup for pi-ai's own auth resolution.
