@@ -245,6 +245,229 @@ export interface DiscoverEndpointResponse {
     /** How many models the endpoint reported. */
     count: number;
 }
+/**
+ * One slice of provider-reported token usage, summed over every session log.
+ * Buckets are disjoint, as `TokenUsage` reports them: billed input is
+ * `inputTokens + cacheReadTokens + cacheWriteTokens`.
+ */
+export interface UsageBuckets {
+    /** Uncached input tokens. */
+    inputTokens: number;
+    outputTokens: number;
+    cacheReadTokens: number;
+    cacheWriteTokens: number;
+    /**
+     * Reasoning (thinking) tokens the provider reported. A SUBSET of
+     * `outputTokens`, never added into any total — carried so reasoning-heavy
+     * models can show how much of their output was thinking.
+     */
+    reasoningTokens: number;
+    /**
+     * Approximate cost in USD over the tokens a pi-ai catalog price matched,
+     * at the flat per-model rates (tiered pricing is priced at the base tier).
+     */
+    cost: number;
+    /**
+     * What the cache reads WOULD have cost at full input rates minus what they
+     * cost at cache rates — the money prompt caching saved. 0 for unpriced
+     * models and for catalogs whose cache rate is not below the input rate.
+     */
+    cacheSavings: number;
+    /** Summed model-call wall time (step open to final accounting). */
+    totalDurationMs: number;
+    /** The slowest single model call; 0 when none reported. */
+    maxDurationMs: number;
+    /** Tokens no catalog price matched; counted in the buckets, absent from `cost`. */
+    unpricedTokens: number;
+    /** Model calls that reported usage (one per turn/step sample). */
+    calls: number;
+}
+/** One model's share of one day, for the by-model day stacking. */
+export interface UsageDayModel {
+    provider: string;
+    model: string;
+    tokens: number;
+}
+/** One local calendar day's usage. */
+export interface UsageDay extends UsageBuckets {
+    /** Host-local calendar day, `YYYY-MM-DD`. */
+    date: string;
+    /** Tool invocations the model requested that day. */
+    toolCalls: number;
+    /** Turns that ended other than `completed` (aborted, error, max-tokens). */
+    failedTurns: number;
+    /**
+     * Agent-busy time that day: summed turn durations (turn/start to turn/end),
+     * capped per turn so a crash-interrupted turn cannot inflate the day.
+     */
+    activeMs: number;
+    /** The day's tokens split per model, largest first. */
+    byModel: UsageDayModel[];
+}
+/** One model's usage over the requested window. */
+export interface UsageModelRow extends UsageBuckets {
+    /** Logged route key, e.g. `anthropic` or `xai-responses`. */
+    provider: string;
+    /** Model id, as the session log records it. */
+    model: string;
+}
+/** One tool's invocations over the requested window. */
+export interface UsageToolRow {
+    /** Tool name as the model requested it. */
+    name: string;
+    calls: number;
+    /** Calls whose result reported a failure. */
+    errors: number;
+}
+/** One working directory's usage over the requested window. */
+export interface UsageProjectRow extends UsageBuckets {
+    /** Session cwd; null groups the sessions that record none. */
+    cwd: string | null;
+}
+/** One hour-of-day slice summed across the whole window (0–23, host-local). */
+export interface UsageHour {
+    hour: number;
+    tokens: number;
+    calls: number;
+}
+/** One day's 24 clock slots, for the hour heatmap. */
+export interface UsageDayHours {
+    date: string;
+    hours: UsageHour[];
+}
+/** One session's usage over the requested window, heaviest first. */
+export interface UsageSessionRow extends UsageBuckets {
+    /** Session id (also the row's key). */
+    id: string;
+    /** The session's first user text, truncated; null when it recorded none. */
+    title: string | null;
+    /** Session cwd; null groups the sessions that record none. */
+    cwd: string | null;
+    /** The latest in-window day the session contributed usage. */
+    lastDate: string;
+    /** Every in-window day the session contributed usage, ascending; the drill-down day filter reads it. */
+    dates: string[];
+    /** Distinct `provider model` keys the session burned in the window; the drill-down model/provider filters read it. */
+    models: string[];
+    /** True when the session ran as a delegated subagent child. */
+    subagent?: boolean;
+}
+/** One step's token accounting, for the session usage timeline. */
+export interface SessionUsageStep {
+    turn: number;
+    step: number;
+    /** Epoch ms when the step's final accounting landed. */
+    time: number;
+    /** Model-call wall time: from step open to its last accounting. */
+    durationMs: number | null;
+    /** The route key the step ran on. */
+    provider: string;
+    model: string;
+    inputTokens: number;
+    outputTokens: number;
+    cacheReadTokens: number;
+    cacheWriteTokens: number;
+    /** Reasoning tokens, a subset of `outputTokens` (0 when unreported). */
+    reasoningTokens: number;
+    /** Approximate cost at catalog rates; 0 when the step was unpriced. */
+    cost: number;
+}
+/** One descendant (subagent) session's contribution to the session view. */
+export interface SessionUsageSubagent {
+    id: string;
+    /** The agent preset the child ran as (e.g. `Explore`); null when unrecorded. */
+    agentPreset: string | null;
+    /** The subagent's first user text (its task), truncated; null when none. */
+    title: string | null;
+    inputTokens: number;
+    outputTokens: number;
+    cacheReadTokens: number;
+    cacheWriteTokens: number;
+    /** Approximate cost at catalog rates. */
+    cost: number;
+    calls: number;
+}
+/** One model's share of one session. */
+export interface SessionUsageModel {
+    provider: string;
+    model: string;
+    inputTokens: number;
+    outputTokens: number;
+    cacheReadTokens: number;
+    cacheWriteTokens: number;
+    /** Reasoning tokens, a subset of `outputTokens` (0 when unreported). */
+    reasoningTokens: number;
+    cost: number;
+    unpricedTokens: number;
+    calls: number;
+}
+/**
+ * Reply of `GET usage/session?id=`: one session's full accounting — totals,
+ * the per-model split, and the per-step timeline (oldest first, capped at
+ * the most recent 480 steps). Totals, groupings, and the timeline fold ONLY
+ * this session, so they reconcile with the composer's own meter; each known
+ * descendant (subagent) session's share arrives separately in the
+ * `subagents` rows, and the client presents the tree rollup from those.
+ */
+export interface SessionUsageResponse {
+    id: string;
+    /** The session's first user text, truncated; null when it recorded none. */
+    title: string | null;
+    /** Display form of the session's cwd, home shortened to `~`; null when unrecorded. */
+    cwd: string | null;
+    inputTokens: number;
+    outputTokens: number;
+    cacheReadTokens: number;
+    cacheWriteTokens: number;
+    cost: number;
+    unpricedTokens: number;
+    calls: number;
+    toolCalls: number;
+    /** Reasoning tokens, a subset of `outputTokens` (0 when unreported). */
+    reasoningTokens: number;
+    /** The session's tool traffic, busiest first. */
+    tools: UsageToolRow[];
+    /**
+     * The session's fullest prompt: the largest prompt-side token count any
+     * call reported (input + cache read + cache write), paired with the route's
+     * advertised context window when known. Null before the first call.
+     */
+    contextPeak: {
+        tokens: number;
+        window: number | null;
+    } | null;
+    models: SessionUsageModel[];
+    /** The known descendant (subagent) sessions' shares, heaviest first. */
+    subagents: SessionUsageSubagent[];
+    /** The session's model calls as a timeline, oldest first, capped at the most recent; `stepsTotal` is the true count. */
+    steps: SessionUsageStep[];
+    /** Every model call the session recorded; exceeds `steps.length` when the timeline carries only the tail. */
+    stepsTotal: number;
+}
+/**
+ * Reply of `GET usage?days=N`: the last N host-local days, oldest first,
+ * today always last, zero-filled where nothing ran — plus the same window
+ * regrouped per model, per tool, per project, and per session, each busiest
+ * first, the last seven days' per-hour figures for the heatmap, and a fixed
+ * 53-week day axis for the activity calendar (independent of the window).
+ * `days=all` spans from the earliest session creation, capped at a year.
+ */
+export interface UsageResponse {
+    days: UsageDay[];
+    models: UsageModelRow[];
+    tools: UsageToolRow[];
+    projects: UsageProjectRow[];
+    /** The heaviest sessions of the window, largest first. */
+    sessions: UsageSessionRow[];
+    /** The window's last seven days, oldest first, 24 clock slots each. */
+    weekHours: UsageDayHours[];
+    /** The last 53 weeks of days, Monday-aligned, oldest first — the calendar grid. */
+    heatmap: UsageDay[];
+    /** Sessions that contributed at least one usage sample inside the window. */
+    sessionCount: number;
+    /** Session logs that could not be read; their usage is missing from the figures. */
+    skippedSessions: number;
+}
 /** Body of `POST logout`. */
 export interface LogoutRequest {
     provider: string;

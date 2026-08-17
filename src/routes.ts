@@ -13,6 +13,7 @@ import type { Context } from '@deepseek-ai/cordis'
 import type {} from '@deepseek-ai/dsh-host-webserver'
 import { BadRequest, errorMessage } from './errors.ts'
 import { isTrustedAccountRequest } from './trust.ts'
+import { UsageCollector } from './usage.ts'
 import { PROVIDERS_ROUTE_PREFIX } from './wire.ts'
 import type {
   AnswerRequest,
@@ -141,6 +142,8 @@ const OPERATION_METHODS: Record<string, 'GET' | 'POST'> = {
   providers: 'GET',
   events: 'GET',
   'stored-key': 'GET',
+  usage: 'GET',
+  'usage/session': 'GET',
   login: 'POST',
   answer: 'POST',
   cancel: 'POST',
@@ -164,8 +167,16 @@ function refuseWrongType(res: ServerResponse, body: object, field: string, type:
   return true
 }
 
+/**
+ * Widest fixed day window `usage` answers: a full year. The UI's widest
+ * fetch is the 90-day window doubled for its preceding period (180); the
+ * headroom lets a hand-built request reach a year of daily detail. The
+ * `all` range is capped server-side instead.
+ */
+const MAX_USAGE_DAYS = 366
+
 /** Dispatch one request to its operation. */
-async function handle(ctx: Context, req: IncomingMessage, res: ServerResponse): Promise<void> {
+async function handle(ctx: Context, usage: UsageCollector, req: IncomingMessage, res: ServerResponse): Promise<void> {
   if (!isTrustedAccountRequest(req)) {
     sendError(res, 403, 'the account plane is reachable from this machine only')
     return
@@ -197,6 +208,51 @@ async function handle(ctx: Context, req: IncomingMessage, res: ServerResponse): 
       return
     }
     streamLogin(ctx, res, loginId)
+    return
+  }
+
+  if (operation === 'usage') {
+    const raw = url.searchParams.get('days')
+    // The all-time range: spanned from the earliest session creation.
+    if (raw === 'all') {
+      sendJson(res, 200, await usage.collectAll())
+      return
+    }
+    const days = raw === null ? 1 : Number.parseInt(raw, 10)
+    if (!Number.isInteger(days) || days < 1 || days > MAX_USAGE_DAYS) {
+      sendError(res, 400, `days must be an integer between 1 and ${MAX_USAGE_DAYS}, or all`)
+      return
+    }
+    // Optional window cap: the response's day axis spans `days`, but its
+    // groupings (models, tools, projects, sessions, week hours) aggregate
+    // over only the LAST `window` of them. The dialog fetches the doubled
+    // span once and cuts it in half client-side, so the preceding period and
+    // the window itself arrive in a single scan instead of two.
+    const rawWindow = url.searchParams.get('window')
+    let windowDays = days
+    if (rawWindow !== null) {
+      windowDays = Number.parseInt(rawWindow, 10)
+      if (!Number.isInteger(windowDays) || windowDays < 1 || windowDays > days) {
+        sendError(res, 400, 'window must be an integer between 1 and days')
+        return
+      }
+    }
+    sendJson(res, 200, await usage.collect(days, windowDays))
+    return
+  }
+
+  if (operation === 'usage/session') {
+    const id = url.searchParams.get('id')
+    if (id === null || id.length === 0) {
+      sendError(res, 400, 'id is required')
+      return
+    }
+    const session = await usage.sessionUsage(id)
+    if (session === null) {
+      sendError(res, 404, 'session not found')
+      return
+    }
+    sendJson(res, 200, session)
     return
   }
 
@@ -317,12 +373,14 @@ export const inject = ['providerAuth']
  * failure. The scoped fiber also unmounts the routes with the server.
  */
 export function apply(ctx: Context): void {
+  // One collector per mounted row: its session cache lives with the routes.
+  const usage = new UsageCollector(ctx)
   ctx.inject(['webServer'], (webCtx: Context) => {
     webCtx.effect(
       () => webCtx.webServer.register({
         kind: 'prefix',
         path: PROVIDERS_ROUTE_PREFIX,
-        handler: (req, res) => handle(ctx, req, res).catch((error: unknown) => {
+        handler: (req, res) => handle(ctx, usage, req, res).catch((error: unknown) => {
           ctx.logger.warn('dsh-providers: account route failed')
           ctx.logger.warn(error)
           if (res.headersSent) {

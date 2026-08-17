@@ -780,3 +780,1493 @@ body[data-ds-dark-theme] .lightOnly {
   text-decoration: underline;
   cursor: pointer;
 }
+
+/* The sidebar-foot usage card. It rides the sidebar's foot action row, so it
+   sizes to the column, not to the settings dialog above. */
+
+.usageCard {
+  appearance: none;
+  box-sizing: border-box;
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  margin: 0 2px 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: 12px;
+  background:
+    linear-gradient(165deg, color-mix(in srgb, var(--dsw-alias-state-business-primary) 7%, transparent), transparent 60%),
+    var(--dsw-alias-bg-layer-1);
+  font: inherit;
+  font-size: 12px;
+  line-height: 16px;
+  text-align: left;
+  color: var(--dsw-alias-label-primary);
+  cursor: pointer;
+  animation: usage-card-in 0.2s var(--ds-ease-in-out, ease) backwards;
+  transition: background 0.15s var(--ds-ease-in-out, ease);
+}
+
+.usageCard:hover {
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+.usageCard:focus-visible {
+  outline: 2px solid var(--dsw-alias-state-business-primary);
+  outline-offset: 1px;
+}
+
+/* The collapsed rail's entry point: one quiet glyph button, like the shell's
+   own rail icons. */
+.usageRailButton {
+  appearance: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin: 0 auto 8px;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--dsw-alias-label-tertiary);
+  cursor: pointer;
+  transition: background 0.15s var(--ds-ease-in-out, ease), color 0.15s var(--ds-ease-in-out, ease);
+}
+
+.usageRailButton:hover {
+  background: var(--dsw-alias-interactive-bg-hover);
+  color: var(--dsw-alias-label-primary);
+}
+
+.usageRailButton:focus-visible {
+  outline: 2px solid var(--dsw-alias-state-business-primary);
+  outline-offset: 1px;
+}
+
+@keyframes usage-card-in {
+  0% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+.usageHead {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.usageTitle {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+  color: var(--dsw-alias-label-secondary);
+}
+
+.usageAlert {
+  flex: none;
+  color: var(--dsw-alias-state-error-primary);
+  font-weight: 600;
+}
+
+.usageCost {
+  flex: none;
+  font-variant-numeric: tabular-nums;
+  color: var(--dsw-alias-label-secondary);
+}
+
+.usageTotal {
+  margin-top: 2px;
+  font-size: 18px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The 14-day trend under the hero figure: an area sparkline stretched to the
+   card's width, today's point marked at the right edge. */
+.usageTrend {
+  margin-top: 6px;
+}
+
+.usageSpark {
+  position: relative;
+  height: 28px;
+}
+
+.usageSpark svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.usageSparkDot {
+  position: absolute;
+  right: -6px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--dsw-alias-state-business-primary);
+  border: 2px solid var(--dsw-alias-bg-layer-1);
+  transform: translateY(-50%);
+}
+
+.usageBar {
+  display: flex;
+  height: 4px;
+  margin-top: 8px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+/* Segments sweep in once on mount (data landing), then glide on refresh. */
+.usageBar > span {
+  display: block;
+  height: 100%;
+  animation: usage-fill-in 0.45s var(--ds-ease-in-out, ease) backwards;
+  transition: width 0.45s var(--ds-ease-in-out, ease);
+}
+
+@keyframes usage-fill-in {
+  0% {
+    width: 0;
+  }
+}
+
+.usageGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 10px;
+  margin: 8px 0 0;
+}
+
+.usageEntry {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+}
+
+.usageDot {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.usageLabel {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--dsw-alias-label-tertiary);
+}
+
+.usageValue {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+  color: var(--dsw-alias-label-secondary);
+}
+
+/* The statistics dialog: stacked day columns over a shared baseline, the
+   window totals in the card's own mix colors, then the recent-first table. */
+
+/* Doubled selector: outranks the shell card's own width at equal layer, so
+   the chart gets a statistics-sized canvas instead of a confirmation box.
+   Wide enough that the 53-week activity calendar lays out fully (1054px of
+   cells at the 14px GitHub pitch) without scrolling; a phone viewport caps
+   it below and the calendar scrolls there instead. */
+.usageModal.usageModal {
+  width: min(1180px, calc(100vw - 32px));
+  max-width: none;
+}
+
+/* The panel is taller than a laptop viewport: scroll inside the card. */
+.usageModalContent.usageModalContent {
+  max-height: calc(100dvh - 160px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* The statistics dialog's frame is FIXED: window picks and tab switches
+   swap content inside it, never move the dialog itself. The tab content
+   column owns the scroll. */
+.usageModalFrame.usageModalFrame {
+  display: flex;
+  flex-direction: column;
+  height: calc(100dvh - 96px);
+  max-height: calc(100dvh - 96px);
+  overflow: hidden;
+}
+
+/* The dsw Modal wraps children in its own body div (display: flex, column,
+   but flex: 0 1 auto with min-height: auto): without this it refuses to
+   shrink and the fixed frame clips its tail instead of scrolling. */
+.usageModalFrame > div:last-child {
+  flex: 1;
+  min-height: 0;
+}
+
+.usageDialogBody {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+  gap: 16px;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+/* Rail + content: the tabs own the left column, the tab's panels scroll in
+   the right one. */
+.usageLayout {
+  display: grid;
+  flex: 1;
+  min-height: 0;
+  grid-template-columns: 148px minmax(0, 1fr);
+  gap: 20px;
+}
+
+.usageContent {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+
+/* The tab rail: vertical pills, the active one filled like the window pick's
+   active segment. */
+.usageTabs {
+  display: flex;
+  flex-direction: column;
+  align-self: start;
+  gap: 2px;
+}
+
+.usageTab,
+.usageTabActive {
+  appearance: none;
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  padding: 8px 12px;
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  color: var(--dsw-alias-label-tertiary);
+  cursor: pointer;
+  transition: background 0.15s var(--ds-ease-in-out, ease), color 0.15s var(--ds-ease-in-out, ease);
+}
+
+.usageTab:hover {
+  background: var(--dsw-alias-interactive-bg-hover);
+  color: var(--dsw-alias-label-secondary);
+}
+
+.usageTabActive {
+  background: var(--dsw-alias-bg-layer-2);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 8%);
+  color: var(--dsw-alias-label-primary);
+  font-weight: 600;
+}
+
+/* The window pick rides the top row; the insight chips fill the rest. The
+   pick pins itself to the right edge, so it never shifts when the chips
+   come and go with the window. */
+.usageTopRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.usageTopRow > .usageWindowRow {
+  margin-left: auto;
+}
+
+/* The whole-window empty state: one calm panel instead of zeroed charts. */
+.usageEmptyState {
+  margin: 0;
+  padding: 44px 0;
+  text-align: center;
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.usageInsights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.usageChip {
+  padding: 2px 10px;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 999px;
+  background: var(--dsw-alias-bg-layer-1);
+  color: var(--dsw-alias-label-secondary);
+  font-size: 11px;
+  line-height: 18px;
+}
+
+/* The hero: the window's headline figures over its trend, one tinted card
+   with the chart as the focal point. */
+.usageHero {
+  min-width: 0;
+  padding: 20px 22px 16px;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 18px;
+  background:
+    linear-gradient(165deg, color-mix(in srgb, var(--dsw-alias-state-business-primary) 8%, transparent), transparent 55%),
+    var(--dsw-alias-bg-layer-1);
+}
+
+.usageHeroStats {
+  display: flex;
+  align-items: baseline;
+  gap: 44px;
+}
+
+.usageHeroStat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.usageHeroLabel {
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.usageHeroNumber {
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.usageHeroHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 18px 0 10px;
+}
+
+.usageHeroFoot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+  margin-top: 12px;
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 11px;
+  line-height: 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The trend legend: one pill per series, dot · name · value. */
+.usageLegend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+  margin-top: 10px;
+}
+
+.usageLegendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  color: var(--dsw-alias-label-secondary);
+  font-size: 11px;
+  line-height: 16px;
+}
+
+.usageLegendName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.usageLegendItem .usageValue {
+  color: var(--dsw-alias-label-primary);
+}
+
+/* Dashboard panels: bordered cards with their own heads, on the hero's
+   gradient wash so every card reads as one family. */
+.usagePanel {
+  min-width: 0;
+  padding: 16px 18px;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 16px;
+  background:
+    linear-gradient(165deg, color-mix(in srgb, var(--dsw-alias-state-business-primary) 8%, transparent), transparent 55%),
+    var(--dsw-alias-bg-layer-1);
+}
+
+.usagePanelHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.usagePanelHead .usageHeading {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+
+/* The donut panel's top-series mini list: dot, name, bar, share. */
+.usageMiniList {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 12px;
+}
+
+.usageMiniRow {
+  display: grid;
+  /* The bar track is wide enough to read as a bar; the share and value
+     columns are FIXED and right-aligned — each row is its own grid, so
+     content-sized columns would let the track drift sideways from row to
+     row ("175" vs "51 · 6✗"). Track and name carry minimums: in the narrow
+     three-column panels the track shrinks toward 40px before the name
+     ellipsizes away. The name absorbs the slack. */
+  grid-template-columns: auto minmax(60px, 1fr) minmax(40px, 96px) 44px 68px;
+  gap: 6px;
+  align-items: center;
+  min-width: 0;
+}
+
+.usageMiniRow .usageShare,
+.usageMiniRow .usageNum {
+  text-align: right;
+}
+
+.usageMiniTrack {
+  height: 4px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+.usageMiniTrack > span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+}
+
+/* The activity calendar: a fixed 53-week grid, weeks as columns, newest
+   weeks scrolled into view (the scroll container starts at the right end). */
+
+.usageCalendar {
+  overflow-x: auto;
+  max-width: 100%;
+  scrollbar-width: thin;
+}
+
+.usageCalendarGrid {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: max-content;
+  padding: 2px 1px 1px;
+}
+
+.usageCalendarMonthRow {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 2px;
+}
+
+.usageCalendarMonth {
+  font-size: 10px;
+  line-height: 14px;
+  text-align: center;
+  white-space: nowrap;
+  color: var(--dsw-alias-label-tertiary);
+}
+
+/* The grid proper: the weekday rail (Mon/Wed/Fri labels) beside the week
+   columns. */
+.usageCalendarBody {
+  display: flex;
+  gap: 4px;
+}
+
+.usageCalendarWeekdays {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: 4px;
+  width: 22px;
+}
+
+.usageCalendarWeekdays > span {
+  height: 12px;
+  font-size: 9px;
+  line-height: 12px;
+  color: var(--dsw-alias-label-tertiary);
+}
+
+.usageCalendarWeekRow {
+  position: relative;
+  display: flex;
+  gap: 4px;
+}
+
+.usageCalendarWeek {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.usageCalendarCell {
+  flex: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  background: var(--dsw-alias-bg-layer-2);
+  transition: transform 0.12s var(--ds-ease-in-out, ease);
+}
+
+.usageCalendarCell:hover {
+  transform: scale(1.15);
+}
+
+.usageCalendarLegend {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.usageCalendarLegendText {
+  font-size: 11px;
+  line-height: 16px;
+  color: var(--dsw-alias-label-tertiary);
+}
+
+.usageCalendarLegendSwatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+/* The treemap: slices as tinted cells whose area equals their share. */
+
+
+
+
+/* One two-column row: the hour heatmap beside the composition donut. */
+
+/* The weekday rhythm bars beside the calendar. */
+/* The weekday rhythm: seven vertical bars under the calendar. */
+
+
+
+
+
+
+/* The 7×24 hour heatmap: date rows, clock columns. */
+.usageWeekHours {
+  display: grid;
+  grid-template-columns: 36px repeat(24, minmax(0, 1fr));
+  gap: 2px;
+  align-items: center;
+}
+
+.usageWeekHead {
+  font-size: 10px;
+  line-height: 14px;
+  text-align: center;
+  color: var(--dsw-alias-label-tertiary);
+}
+
+.usageWeekDay {
+  font-size: 10px;
+  line-height: 14px;
+  text-align: right;
+  padding-right: 3px;
+  white-space: nowrap;
+  color: var(--dsw-alias-label-tertiary);
+}
+
+.usageWeekCell {
+  aspect-ratio: 1;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--dsw-alias-label-tertiary) 7%, transparent);
+}
+
+/* The smooth area chart frame; gridlines and crosshair float above the
+   stretched SVG. */
+.usageArea {
+  position: relative;
+  height: 260px;
+  border-bottom: 1px solid var(--dsw-alias-border-l1);
+}
+
+.usageAreaSvg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.usageAreaLine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+  width: 1px;
+  background: var(--dsw-alias-interactive-bg-hover);
+  pointer-events: none;
+}
+
+.usageAreaDot {
+  position: absolute;
+  z-index: 1;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--dsw-alias-bg-layer-1);
+  border: 2px solid var(--dsw-alias-state-business-primary);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+/* The models tab: donut beside its top-series bars. */
+.usageDonutRow {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  gap: 24px;
+  align-items: center;
+}
+
+.usageDonutRow > .usageDonut {
+  margin: 0 auto;
+}
+
+/* The tab switch hides grids via the `hidden` attribute; the class's own
+   display would otherwise outrank the UA rule. */
+.usageMain3[hidden],
+.usageSessionStats[hidden] {
+  display: none;
+}
+
+/* The breakdown tab's bar panels (providers, sessions, projects, tools):
+   stacked full width, the same measure as the model table above them. */
+.usageMain3 {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+/* Segmented control for the window and stack choices. */
+.usageWindowRow {
+  display: inline-flex;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 9px;
+  background: var(--dsw-alias-bg-layer-1);
+}
+
+.usageWindowChoice,
+.usageWindowActive {
+  appearance: none;
+  border: none;
+  border-radius: 7px;
+  padding: 3px 12px;
+  background: transparent;
+  font: inherit;
+  font-size: 12px;
+  color: var(--dsw-alias-label-secondary);
+  cursor: pointer;
+  transition: background 0.15s var(--ds-ease-in-out, ease), color 0.15s var(--ds-ease-in-out, ease);
+}
+
+.usageWindowChoice:hover {
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+.usageWindowActive {
+  background: var(--dsw-alias-bg-layer-2);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 8%);
+  color: var(--dsw-alias-label-primary);
+}
+
+/* Movement chip: a tinted pill, colored by what the movement means for the
+   metric (down for spend, up for cache hits reads success; the other way
+   reads warn). */
+.usageDelta {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: 6px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.usageDeltaGood {
+  color: var(--dsw-alias-state-success-primary);
+  background: var(--dsw-alias-state-success-tertiary);
+}
+
+.usageDeltaBad {
+  color: var(--dsw-alias-state-warn-primary);
+  background: var(--dsw-alias-state-warn-tertiary);
+}
+
+/* Section titles: an accent rule before the name, so the dialog reads as a
+   dashboard of panels rather than a stack of captions. */
+.usageHeading {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  color: var(--dsw-alias-label-primary);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.usageHeading::before {
+  content: '';
+  flex: none;
+  width: 3px;
+  height: 13px;
+  border-radius: 2px;
+  background: var(--dsw-alias-state-business-primary);
+}
+
+/* A count beside a section title, pushed to the far edge (step counts). */
+.usageHeadingCount {
+  margin-left: auto;
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 11px;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}
+
+.usageChart {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  gap: 4px;
+  height: 260px;
+  border-bottom: 1px solid var(--dsw-alias-border-l1);
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+/* Dashed 25/50/75% gridlines; painted over the columns, under the tooltip. */
+.usageChartGrid {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.usageChartGrid > span {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-top: 1px dashed var(--dsw-alias-border-l2);
+}
+
+/* The day tooltip floats above the chart, centered on the hovered column. */
+.usageTip {
+  position: absolute;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 156px;
+  max-width: 240px;
+  padding: 8px 10px;
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: 8px;
+  background: var(--dsw-alias-bg-layer-2);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 12%);
+  pointer-events: none;
+  font-size: 11px;
+  line-height: 15px;
+  animation: usage-tip-in 0.12s var(--ds-ease-in-out, ease) backwards;
+}
+
+@keyframes usage-tip-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.usageTipDate {
+  color: var(--dsw-alias-label-primary);
+  font-weight: 500;
+}
+
+.usageTipRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.usageTipName {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--dsw-alias-label-secondary);
+}
+
+.usageTipShare {
+  margin-left: auto;
+  padding-left: 8px;
+  white-space: nowrap;
+  color: var(--dsw-alias-label-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+.usageTipFoot {
+  display: flex;
+  gap: 8px;
+  margin-top: 2px;
+  padding-top: 4px;
+  border-top: 1px solid var(--dsw-alias-border-l1);
+  color: var(--dsw-alias-label-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+.usageChartCol {
+  display: flex;
+  flex: 1;
+  min-width: 3px;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+/* Bottom-up stacking: the first mix part sits on the baseline. The floor
+   keeps a busy day visible beside a day three orders of magnitude bigger. */
+.usageChartFill {
+  display: flex;
+  flex-direction: column-reverse;
+  width: 100%;
+  min-height: 3px;
+  border-radius: 4px 4px 0 0;
+  overflow: hidden;
+  animation: usage-rise 0.45s var(--ds-ease-in-out, ease) backwards;
+  transition: opacity 0.15s var(--ds-ease-in-out, ease);
+}
+
+.usageChartCol:hover .usageChartFill {
+  opacity: 0.85;
+}
+
+.usageChartFill > span {
+  display: block;
+  width: 100%;
+}
+
+@keyframes usage-rise {
+  0% {
+    height: 0;
+  }
+}
+
+.usageChartAxis {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 11px;
+}
+
+/* The last tick is today: a marker dot before the date. */
+.usageAxisToday {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--dsw-alias-label-secondary);
+}
+
+.usageAxisToday::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--dsw-alias-state-business-primary);
+}
+
+.usageDonut {
+  position: relative;
+  width: 140px;
+  height: 140px;
+}
+
+.usageDonutSvg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+/* The mount sweep: dasharray moves from zero to the share. */
+.usageDonutSegment {
+  transition: stroke-dasharray 0.6s var(--ds-ease-in-out, ease);
+}
+
+.usageDonutCenter {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  pointer-events: none;
+}
+
+/* usageLabel's flex: 1 serves the ranking rows; in the donut's column
+   layout it would swallow the free height and shove the figure off-center. */
+.usageDonutCenter .usageLabel {
+  flex: none;
+}
+
+.usageDonutValue {
+  font-size: 19px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Ranked tables: one grid per section; head cells and row cells share the
+   column template, so numbers line up in columns the way a table's should,
+   and each row's track spans the full width. */
+.usageList {
+  display: grid;
+  gap: 6px 8px;
+  min-width: 0;
+}
+
+.usageListModel {
+  /* Numeric columns grow with their figures; only the name column gives way. */
+  grid-template-columns: minmax(0, 1fr) 56px minmax(80px, auto) minmax(56px, auto) minmax(64px, auto);
+}
+
+.usageListCell {
+  padding-bottom: 2px;
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 11px;
+}
+
+/* The session page's subagent table: task, the four buckets, cost. */
+.usageListSubagents {
+  grid-template-columns: minmax(0, 1fr) repeat(5, minmax(52px, auto));
+}
+
+/* The small pill after a session row's name marking a delegated subagent. */
+.usageRowTag {
+  margin-left: 6px;
+  padding: 0 5px;
+  border-radius: 4px;
+  background: var(--dsw-alias-bg-layer-2);
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 10px;
+  line-height: 15px;
+  white-space: nowrap;
+}
+
+/* The subagent table's rollup rows read a shade heavier than the entries. */
+.usageRowStrong {
+  color: var(--dsw-alias-label-primary);
+  font-weight: 600;
+}
+
+.usageListMain {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.usageList > .usageModelTrack {
+  grid-column: 1 / -1;
+}
+
+.usageNum {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--dsw-alias-label-secondary);
+}
+
+.usageShare {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--dsw-alias-label-tertiary);
+}
+
+.usageModelName {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.usageModelTrack {
+  height: 4px;
+  margin-top: 4px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+/* Same rise vocabulary as the day columns, sideways. */
+.usageModelBar {
+  display: block;
+  height: 100%;
+  min-width: 3px;
+  border-radius: 999px;
+  background: var(--dsw-alias-state-business-primary);
+  animation: usage-fill-in 0.45s var(--ds-ease-in-out, ease) backwards;
+  transition: width 0.45s var(--ds-ease-in-out, ease);
+}
+
+.usageTable {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto auto auto auto auto;
+  gap: 4px 16px;
+}
+
+.usageTable .usageValue {
+  text-align: right;
+}
+
+/* The tokens cell stacks the figure over a mini bar of the day's share, so
+   the table reads as a chart of its own; the peak day's figure turns bold. */
+.usageCellValue {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 3px;
+  min-width: 0;
+}
+
+.usageCellBar {
+  display: block;
+  width: 64px;
+  height: 4px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+.usageCellBar > span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--dsw-alias-state-business-primary);
+}
+
+.usagePeak {
+  color: var(--dsw-alias-label-primary);
+  font-weight: 600;
+}
+
+.usageTableHead {
+  color: var(--dsw-alias-label-tertiary);
+}
+
+.usageTable > .usageTableHead:not(:first-child) {
+  text-align: right;
+}
+
+.usageTableRow {
+  display: contents;
+}
+
+/* Visually hidden live region; the card body is title-only otherwise. */
+.usageStatus {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .usageCard,
+  .usageBar > span,
+  .usageChartFill,
+  .usageModelBar,
+  .usageDonutSegment,
+  .usageTip,
+  .usageCalendarCell {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* ── the 星图 skin ────────────────────────────────────────────────────
+   The dialog body always carries the variant class: large-format — 40px
+   hero figures, a 320px trend, airy panels. */
+
+/* 星图 Stellar: large-format — 40px figures, a 320px trend, airy panels. */
+.usageVariantStellar .usageHero {
+  padding: 24px 26px 20px;
+  border-radius: 22px;
+  background:
+    linear-gradient(165deg, color-mix(in srgb, var(--dsw-alias-state-business-primary) 12%, transparent), transparent 60%),
+    var(--dsw-alias-bg-layer-1);
+}
+
+.usageVariantStellar .usageHeroNumber {
+  font-size: 40px;
+}
+
+.usageVariantStellar .usageHeroStats {
+  gap: 56px;
+}
+
+.usageVariantStellar .usageChart,
+.usageVariantStellar .usageArea {
+  height: 320px;
+}
+
+.usageVariantStellar .usagePanel {
+  padding: 22px 24px;
+  border-radius: 20px;
+}
+
+.usageVariantStellar .usageTabs {
+  gap: 4px;
+}
+
+.usageVariantStellar .usageTab,
+.usageVariantStellar .usageTabActive {
+  padding: 10px 14px;
+  font-size: 14px;
+}
+
+.usageVariantStellar .usageDonutRow {
+  grid-template-columns: 180px minmax(0, 1fr);
+}
+
+.usageVariantStellar .usageMiniTrack {
+  height: 6px;
+}
+
+.usageVariantStellar .usageLegendItem {
+  font-size: 12px;
+}
+
+.usageVariantStellar .usageHeroHead {
+  margin: 22px 0 12px;
+}
+
+/* One headline tile of the session stats tab's stat grid. */
+.usageDrillStat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 10px;
+  background: var(--dsw-alias-bg-layer-1);
+}
+
+/* A token-kind card's label wears its series dot, tying the card to the
+   mix bar, the legend, and the timeline's colors. */
+.usageDrillKind {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.usageDrillValue {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 17px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--dsw-alias-label-primary);
+}
+
+/* The stats view tab: the session panel at the chat column's width. The
+   dsw styles carry no global box-sizing reset — declare it or the padding
+   pushes the box 32px past the view area. */
+.usageSessionView {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 748px;
+  margin: 0 auto;
+  padding: 20px 16px 32px;
+}
+
+.usageSessionBody {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.usageSessionHead {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  /* Breathing room around the title block inside the hero card. */
+  padding: 6px 2px 0;
+}
+
+/* The session hero stacks head, cards, mix bar, and legend on one rhythm. */
+.usageSessionBody .usageHero {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.usageSessionBody .usageHero .usageLegend {
+  margin-top: -6px;
+}
+
+.usageSessionName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--dsw-alias-label-primary);
+}
+
+.usageSessionMeta {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+  color: var(--dsw-alias-label-tertiary);
+}
+
+.usageSessionStats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 8px;
+}
+
+/* The per-step timeline: one bar per model call, sized by its tokens. */
+
+
+/* Phones: one column, smaller figures, tables scroll inside their panels. */
+@media (max-width: 760px) {
+  .usageModal.usageModal {
+    width: calc(100vw - 16px);
+  }
+
+  .usageModalFrame.usageModalFrame {
+    height: calc(100dvh - 32px);
+    max-height: calc(100dvh - 32px);
+  }
+
+  /* The tab rail folds into a horizontal scroll strip above the content. */
+  .usageLayout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .usageTabs {
+    flex-direction: row;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .usageTab,
+  .usageTabActive {
+    width: auto;
+    white-space: nowrap;
+  }
+
+  .usageHeroStats {
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .usageHeroStat {
+    flex: 1 1 42%;
+  }
+
+  .usageHeroNumber {
+    font-size: 24px;
+  }
+
+  .usageHeroHead {
+    flex-wrap: wrap;
+  }
+
+  .usageChart,
+  .usageArea {
+    height: 170px;
+  }
+
+  .usageDonutRow,
+  .usageSessionStats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .usageVariantStellar .usageHeroNumber {
+    font-size: 28px;
+  }
+
+  .usageVariantStellar .usageChart,
+  .usageVariantStellar .usageArea {
+    height: 200px;
+  }
+
+
+  .usageTable {
+    min-width: 560px;
+  }
+
+  .usageList {
+    min-width: 640px;
+  }
+}
+
+/* The session timeline: full-width SVG, the axis and labels on the border
+   and caption aliases, the cumulative line on the primary alias. */
+.usageTimeline {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.usageTimelineAxis {
+  stroke: var(--dsw-alias-border-l1);
+}
+
+.usageTimelineLabel {
+  fill: var(--dsw-alias-label-tertiary);
+  font-size: 10px;
+}
+
+/* The cumulative trend reads as the session's token 走势: a soft area fill
+   under the line. NEUTRAL label-primary, never a series hue — the blue is
+   already the 输入 bars', so a blue total line would read as one kind. The
+   line, its area, the right axis, and the legend swatch all share it. */
+.usageTimelineArea {
+  fill: var(--dsw-alias-label-primary);
+  opacity: 0.07;
+  stroke: none;
+}
+
+.usageTimelineLine {
+  fill: none;
+  stroke: var(--dsw-alias-label-primary);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+/* The timeline's hover frame: the crosshair and tooltip anchor to it. */
+.usageTimelineFrame {
+  position: relative;
+}
+
+.usageTimelineGrid {
+  stroke: var(--dsw-alias-border-l2);
+  stroke-dasharray: 3 4;
+}
+
+/* The right axis wears the cumulative line's color, tying scale to line. */
+.usageTimelineLabelLine {
+  fill: var(--dsw-alias-label-primary);
+  font-size: 10px;
+}
+
+/* The context-size line: each call's prompt tokens, dashed and neutral. */
+.usageTimelineContext {
+  fill: none;
+  stroke: var(--dsw-alias-label-secondary);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 3;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+/* The dragged range's highlight over the chart area. */
+.usageTimelineBrush {
+  position: absolute;
+  z-index: 1;
+  background: color-mix(in srgb, var(--dsw-alias-state-business-primary) 10%, transparent);
+  border-inline: 1px solid var(--dsw-alias-state-business-primary);
+  pointer-events: none;
+}
+
+/* The overlay lines' legend swatches: solid cumulative, dashed context. */
+.usageTimelineSwatchLine {
+  width: 14px;
+  height: 0;
+  border-top: 2px solid var(--dsw-alias-label-primary);
+}
+
+.usageTimelineSwatchContext {
+  width: 14px;
+  height: 0;
+  border-top: 2px dashed var(--dsw-alias-label-secondary);
+}
+
+/* Drill-down affordance: a row or calendar cell that filters the session
+   detail list on click. The bar rows become real buttons — reset the UA
+   chrome so the grid row keeps its look. */
+.usagePickable {
+  cursor: pointer;
+}
+
+button.usageMiniRow {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+}
+
+.usagePickable:hover .usageModelName,
+.usagePicked .usageModelName {
+  color: var(--dsw-alias-state-business-primary);
+}
+
+/* A picked table row tints every cell, so the whole row reads selected. */
+.usageList .usagePicked {
+  background: color-mix(in srgb, var(--dsw-alias-state-business-primary) 8%, transparent);
+}
+
+.usagePicked.usageCalendarCell {
+  outline: 2px solid var(--dsw-alias-state-business-primary);
+  outline-offset: -1px;
+}

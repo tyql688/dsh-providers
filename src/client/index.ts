@@ -16,12 +16,18 @@ import type {} from '@deepseek-ai/dsh-client-locale/client'
 import type {} from '@deepseek-ai/dsh-client-ui-conversation/client'
 // Type-only: ctx.modelDirectories, ctx.sessions, and the `model` locale namespace.
 import type {} from '@deepseek-ai/dsh-client-ui-model-selection/client'
+// Type-only: the sidebar shell's SlotMap merge (the 'sidebar.footer.action' seat).
+import type {} from '@deepseek-ai/dsh-client-ui-sidebar/client'
 import { AccountsSection } from './AccountsSection.tsx'
 import { ModelSeat } from './ModelSeat.tsx'
 import type { AccountsSectionInjected } from './AccountsSection.tsx'
+import { SessionUsageView } from './SessionUsageView.tsx'
+import { UsageCard } from './UsageCard.tsx'
+import type { UsageCardInjected } from './UsageCard.tsx'
 import { en, zh } from './locales.ts'
 import type { AccountsKey } from './locales.ts'
 import { AccountsStore } from './store.ts'
+import { UsageStore } from './usage-store.ts'
 
 export type { AccountsSectionInjected, AccountsSectionProps } from './AccountsSection.tsx'
 export type { AccountsState, AccountsStore, LoginFlowState } from './store.ts'
@@ -65,6 +71,32 @@ export function apply(ctx: Context): void {
     label: () => t('nav'),
     inject: injected,
   }, AccountsSection))
+
+  // The sidebar-foot usage card: today's token figures from this plugin's
+  // own `usage` route, seated in the shell's additive foot row. Copy rides
+  // the framework locale seat, so a language flip re-renders the card.
+  const usage = new UsageStore()
+  const useUsageSnapshot = bindSnapshotSelector(usage)
+  ctx.effect(() => () => usage.dispose(), 'dsh-providers: usage store')
+  ctx.slots.inject('sidebar.footer.action', () => ctx.slots.register({
+    name: 'sidebar.footer.action',
+    id: 'usage',
+    locale: NS,
+    inject: (): UsageCardInjected => ({ controller: usage, useSnapshot: useUsageSnapshot }),
+  }, UsageCard))
+
+  // The session view ring's stats tab (对话 / 轨迹 / 统计): the current
+  // session's accounting from this plugin's `usage/session` route. One list
+  // entry with an id and label is the whole contract; the view reads the
+  // current session off the standard sessions feed.
+  ctx.slots.inject('conversation.view', () => ctx.slots.register({
+    name: 'conversation.view',
+    id: 'usage',
+    order: 20,
+    label: () => t('usageViewTab'),
+    locale: NS,
+    inject: () => ({}),
+  }, SessionUsageView))
 
   // The composer model seat, re-rendered with brand glyphs. It SHADOWS the
   // stock occupant (single slots render the lowest priority) and reuses that

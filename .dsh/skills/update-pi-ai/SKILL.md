@@ -24,7 +24,8 @@ The plugin bundles its own `@earendil-works/pi-ai`, separate from the copy insid
    - A **removed provider** may strand signed-in users; check whether `auth.json` entries or written routes reference it before merging.
    - An **adapter protocol change** affects what routes may name; verify `openai-completions`, `openai-responses`, and `anthropic-messages` are still served.
 5. Refresh the snapshot: `node scripts/pi-ai-catalog.mjs --update`.
-6. Commit `package.json`, `pnpm-lock.yaml`, `lib/`, and the snapshot together in one change, with the catalog diff summarized in the message body.
+6. Sync the README provider lists with the refreshed snapshot: both `README.md` ("Providers (pi-ai X.Y.Z)") and `README.zh.md` ("支持的提供方(pi-ai X.Y.Z)") carry an OAuth line and an API-key line generated from the snapshot's `providers[]` (`name` grouped by `oauth`), plus the pi-ai version in the heading. Update the names AND the version whenever the provider set or the pinned version changes.
+7. Commit `package.json`, `pnpm-lock.yaml`, `lib/`, the snapshot, and the README lists together in one change, with the catalog diff summarized in the message body.
 
 ### Version-skew discipline
 

@@ -4,8 +4,8 @@ dsh-providers is a single-package DeepSeek Harness (dsh) plugin: OAuth/API-key s
 
 ## Layout
 
-- `src/` — Host half: `credentials.ts` (credential provider + account service), `routes.ts` (loopback HTTP surface), `routing.ts` (settings-side route writes with snapshot rollback), `catalog.ts` / `remote-catalog.ts` (model catalogs), `login.ts`, `store.ts`, `trust.ts`, `wire.ts` (the browser/Host contract).
-- `src/client/` — the Accounts settings page (React, CSS module). State lives in `store.ts`; components render from snapshots only.
+- `src/` — Host half: `credentials.ts` (credential provider + account service), `routes.ts` (loopback HTTP surface), `routing.ts` (settings-side route writes with snapshot rollback), `catalog.ts` / `remote-catalog.ts` (model catalogs), `usage.ts` (per-day token figures folded from the session logs), `login.ts`, `store.ts`, `trust.ts`, `wire.ts` (the browser/Host contract).
+- `src/client/` — the Accounts settings page and the sidebar usage card (React, CSS module). State lives in `store.ts` / `usage-store.ts`; components render from snapshots only.
 - `lib/` — prebuilt output, committed so git installs run no build scripts.
 - `scripts/` — maintenance tools; `pi-ai-catalog.mjs` + its committed snapshot describe the installed pi-ai catalog.
 - `.dsh/skills/` — repo skills; `update-pi-ai` documents the dependency-bump workflow.
