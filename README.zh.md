@@ -10,6 +10,13 @@
 dsh plugin --profile web add github:tyql688/dsh-providers
 ```
 
+第一次 `add` 常会因 `@google/genai` 与 `protobufjs` 报 `ERR_PNPM_IGNORED_BUILDS`（pi-ai 的传递依赖，本插件不跑它们的安装脚本）。拒绝这两个脚本后再执行同一条 `add`，dsh 才会把插件挂上：
+
+```sh
+dsh plugin --profile web approve-builds '!@google/genai' '!protobufjs'
+dsh plugin --profile web add github:tyql688/dsh-providers
+```
+
 也可本地 clone:
 
 ```sh
@@ -46,7 +53,7 @@ dsh plugin --profile web remove dsh-providers
 
 存储:OAuth 令牌在 `$DSH_HOME/auth.json`,API 密钥在 `.credentials.yaml`,目录缓存在 `model-catalog.json`,路由在 `settings.yaml`。环境变量密钥不会被存储。
 
-已在 `@deepseek-ai/dsh@0.1.0-rc.6`、Node 22+ 验证。
+已在 `@deepseek-ai/dsh@0.1.0-rc.7`、Node 22+ 验证。
 
 ## 开发
 

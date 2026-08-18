@@ -10,6 +10,13 @@ Model providers for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-h
 dsh plugin --profile web add github:tyql688/dsh-providers
 ```
 
+The first `add` often exits with `ERR_PNPM_IGNORED_BUILDS` for `@google/genai` and `protobufjs` (pi-ai pulls them; this plugin does not run their install scripts). Deny both and repeat the same add so dsh mounts the bundle:
+
+```sh
+dsh plugin --profile web approve-builds '!@google/genai' '!protobufjs'
+dsh plugin --profile web add github:tyql688/dsh-providers
+```
+
 Or from a local clone:
 
 ```sh
@@ -46,7 +53,7 @@ The sidebar gains a **Tokens today** card; clicking it opens the usage statistic
 
 Storage: OAuth tokens in `$DSH_HOME/auth.json`, API keys in `.credentials.yaml`, catalog cache in `model-catalog.json`, routes in `settings.yaml`. Environment keys are never stored.
 
-Verified against `@deepseek-ai/dsh@0.1.0-rc.6`, Node 22+.
+Verified against `@deepseek-ai/dsh@0.1.0-rc.7`, Node 22+.
 
 ## Development
 
